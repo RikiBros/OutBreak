@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OUTBREAK - Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Russo+One&family=Oswald:wght@300;400;600&family=Black+Ops+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/menu.css" />
+<!-- google identity services iniciar sesion con google -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="stylesheet" href="css/index.css"/>
+<script src="js/comun/cursor.js"></script>
+</head>
+<body>
+
+<!-- video de fondo -->
+<video id="bg-gif" autoplay muted playsinline>
+  <source src="media/menu.mp4" type="video/mp4">
+</video>
+
+<!-- capa de cinta vhs cuando el video se rebobina -->
+<div id="vhs-overlay">
+  <div id="vhs-band"></div>
+  <div id="vhs-rewind-label"></div>
+</div>
+
+<div id="vignette"></div>
+<div id="grad-bottom"></div>
+<div id="scan"></div>
+<div id="hud-border"></div>
+
+<!-- badge de usuario logueado -->
+<div id="user-badge">
+  <img id="badge-foto" alt="" style="display:none" referrerpolicy="no-referrer"/>
+  OPERATIVO: <span id="badge-username">---</span>
+  <button onclick="cerrarSesion()">SALIR</button>
+</div>
+
+<!-- boton login visible sin sesion -->
+<button class="btn-login-trigger" id="btn-abrir-login" onclick="abrirAuth()">
+  INICIAR SESIÓN
+</button>
+
+<div id="app">
+  <div id="top-right">
+    <span class="red-dot"></span> v1.0.0 - 2026
+  </div>
+
+  <div id="middle">
+    <span class="logo-main">
+      OUTBREAK
+      <span class="blood-splash-wrap" aria-hidden="true">
+        <svg viewBox="100 0 0 40" preserveAspectRatio="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <!-- mancha principal que atraviesa todo el ancho -->
+          <path d="
+            M0,20
+            C30,8 60,28 90,18
+            C110,12 130,26 155,16
+            C175,8 195,24 220,14
+            C240,6 260,22 285,18
+            C305,14 325,26 350,16
+            C368,10 385,22 400,18
+            L400,28
+            C385,32 368,22 350,28
+            C325,34 305,20 285,26
+            C260,32 240,16 220,24
+            C195,32 175,18 155,26
+            C130,34 110,20 90,28
+            C60,36 30,18 0,28
+            Z
+          " fill="#8B0000" opacity="0.9"/>
+
+          <!-- goteo izquierdo largo -->
+          <path d="M45,26 Q43,38 45,52 Q47,58 45,65 Q44,70 46,72"
+                stroke="#8B0000" stroke-width="3.5" fill="none"
+                stroke-linecap="round"/>
+          <ellipse cx="45.5" cy="74" rx="3" ry="4" fill="#8B0000"/>
+
+          <!-- goteo centro izquierda corto -->
+          <path d="M130,24 Q129,32 131,40 Q132,44 130,46"
+                stroke="#CC2222" stroke-width="2.5" fill="none"
+                stroke-linecap="round"/>
+          <ellipse cx="130.5" cy="48" rx="2.5" ry="3" fill="#CC2222"/>
+
+          <!-- salpicadura pequeña arriba derecha -->
+          <circle cx="290" cy="10" r="3.5" fill="#AA1111" opacity="0.7"/>
+          <circle cx="302" cy="6"  r="2"   fill="#AA1111" opacity="0.5"/>
+          <circle cx="312" cy="9"  r="1.5" fill="#AA1111" opacity="0.6"/>
+
+          <!-- goteo derecho que cae -->
+          <path d="M340,24 Q338,35 340,48 Q341,53 339,56"
+                stroke="#8B0000" stroke-width="3" fill="none"
+                stroke-linecap="round"/>
+          <ellipse cx="339.5" cy="58" rx="2.5" ry="3.5" fill="#8B0000"/>
+
+          <!-- salpicaduras pequeñas dispersas -->
+          <circle cx="75"  cy="14" r="2.5" fill="#AA0000" opacity="0.6"/>
+          <circle cx="200" cy="12" r="2"   fill="#CC0000" opacity="0.7"/>
+          <circle cx="245" cy="26" r="3"   fill="#990000" opacity="0.5"/>
+          <circle cx="175" cy="8"  r="1.5" fill="#BB1111" opacity="0.6"/>
+          <circle cx="385" cy="15" r="2"   fill="#AA1111" opacity="0.4"/>
+
+          <!-- mancha secundaria con textura irregular -->
+          <path d="
+            M60,19 Q75,13 85,20 Q95,26 110,19 Q120,14 135,20 Q145,25 155,18
+          " stroke="#AA0000" stroke-width="1.5" fill="none" opacity="0.5"/>
+
+        </svg>
+      </span>
+    </span>
+
+    <p class="logo-sub">survival horror <span class="text-red">multiplayer</span></p>
+    <p class="lore">
+      El virus se propagó en 72 horas.<br>
+      Las ciudades cayeron. Los refugios, traicionados.<br>
+      Solo quedan los que aún no saben que están muertos.
+    </p>
+  </div>
+
+  <nav id="nav">
+    <a class="menu-btn" href="#" onclick="irAJugar(event)">
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/>
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+          <path d="M12 9V4M8.536 14l-4.33-2.5M15.464 14l4.33-2.5"/>
+        </svg>
+      </div>
+      <span class="btn-label">JUGAR</span>
+    </a>
+
+    <a class="menu-btn" href="configuracion.html">
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+        </svg>
+      </div>
+      <span class="btn-label">CONFIGURACIÓN</span>
+    </a>
+
+    <button class="menu-btn" onclick="window.close()">
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+      <span class="btn-label">SALIR</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- modal login registro -->
+<div id="auth-modal">
+  <div class="auth-box">
+    <button class="auth-close" onclick="cerrarAuth()">×</button>
+    <h2>OUTBREAK</h2>
+    <p class="auth-sub">INICIA SESIÓN PARA CONTINUAR</p>
+
+    <!-- boton oficial de google se dibuja con javascript -->
+    <div id="google-btn-wrap"></div>
+
+    <p class="auth-msg" id="auth-msg"></p>
+  </div>
+</div>
+
+<!-- modal como quieres jugar -->
+<div id="play-modal">
+  <div class="auth-box play-box">
+    <button class="auth-close" onclick="cerrarModoJuego()">×</button>
+    <h2>JUGAR</h2>
+    <p class="auth-sub">¿CÓMO QUIERES JUGAR?</p>
+    <div class="play-options">
+      <a class="play-option" href="mapas.html">
+        <span class="play-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
+        </span>
+        <span class="play-name">SOLITARIO</span>
+        <span class="play-desc">Tú contra la horda</span>
+      </a>
+      <a class="play-option" href="en-linea.html">
+        <span class="play-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span class="play-name">EN LÍNEA</span>
+        <span class="play-desc">Hasta 4 operativos</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="js/index.js"></script>
+</body>
+</html>

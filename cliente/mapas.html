@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OUTBREAK - Mapas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/mapas.css"/>
+<script src="js/comun/cursor.js"></script>
+</head>
+<body>
+
+<div class="outbreak-screen">
+  <div class="bg-overlay"></div>
+  <div class="scan-line"></div>
+  <div class="vignette"></div>
+  <div class="hud-border"></div>
+
+  <div class="content">
+    <div class="top-bar">
+      <div></div>
+      <div class="top-right"><span class="red-dot"></span> v1.0.0 - 2026</div>
+    </div>
+
+    <div class="screen-header">
+      <h1 class="screen-title">SELECCIONA MAPA</h1>
+      <button class="back-btn" onclick="window.location.href='index.html'">← REGRESAR</button>
+    </div>
+
+    <div class="carousel-area">
+      <button class="arrow-btn" id="prev-btn" onclick="changeMap(-1)">ANT</button>
+
+      <div class="map-display" id="map-display">
+        </div>
+
+      <button class="arrow-btn" id="next-btn" onclick="changeMap(1)">SIG</button>
+    </div>
+
+    <div class="map-info">
+      <div class="map-name" id="map-name">CARGANDO...</div>
+      <div class="map-desc" id="map-desc">Por favor espere.</div>
+    </div>
+
+    <div class="map-dots-nav" id="dots"></div>
+
+    <div class="start-action-container">
+      <button class="start-btn" onclick="abrirModos()">COMENZAR</button>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="coord-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(180,0,0,0.5)" stroke-width="1.5" style="flex-shrink:0"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"/><path d="M12 9V5M9.4 13.5L5.9 15.5M14.6 13.5L18.1 15.5"/></svg>
+        <div class="coord-group"><span class="coord-label">+ Latitud</span><span class="coord-val" id="hud-lat">25.6866° N</span></div>
+        <div class="coord-sep"></div>
+        <div class="coord-group"><span class="coord-label">Longitud</span><span class="coord-val" id="hud-lng">100.3161° W</span></div>
+        <div class="coord-sep"></div>
+        <div class="coord-group"><span class="coord-label">Altitud +</span><span class="coord-val" id="hud-alt">538m</span></div>
+      </div>
+      <div class="sys-status">
+        <div class="sys-label"><span class="red-dot"></span> ESTADO DEL SISTEMA</div>
+        <div class="alert-row">
+          <span class="sys-alert">ALERTA ROJA</span>
+          <svg width="28" height="14" viewBox="0 0 28 14" fill="none" stroke="#cc2222" stroke-width="1.5"><path d="M0 7h4l2-5 4 10 2-5h6l2-4 4 8 2-4h4"/></svg>
+        </div>
+        <div class="sys-threat">NIVEL DE AMENAZA: <span class="threat-red" id="threat-level">CRÍTICO</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- paso 2 elegir modo de juego -->
+<div id="mode-modal">
+  <div class="mode-box">
+    <button class="mode-close" onclick="cerrarModos()">×</button>
+    <h2 style="font-size:28px">MODO DE JUEGO</h2>
+    <p class="mode-sub">ZONA: <span id="mode-map-name">---</span></p>
+    <div class="mode-grid">
+      <div class="mode-card selected" id="mode-survival" onclick="elegirModo('survival')">
+        <div class="mode-title">RESISTE</div>
+        <div class="mode-desc">Aguanta 3 oleadas de 1 minuto hasta que llegue el helicóptero. Tienda entre oleadas</div>
+      </div>
+      <div class="mode-card" id="mode-zona" onclick="elegirModo('zona')">
+        <div class="mode-title">POR HONOR</div>
+        <div class="mode-desc">Te quedan 3 minutos. Pelea dentro de una zona que se encoge y se mueve. Sin tienda</div>
+      </div>
+    </div>
+    <h2 style="font-size:28px;margin-top:-4px">DIFICULTAD</h2>
+    <div class="mode-grid">
+      <div class="mode-card selected" id="dif-estandar" onclick="elegirDif('estandar')">
+        <div class="mode-title">ESTÁNDAR</div>
+        <div class="mode-desc">Para aprender a jugar.</div>
+        <ul class="dif-list" id="dif-list-estandar"></ul>
+      </div>
+      <div class="mode-card" id="dif-dificil" onclick="elegirDif('dificil')">
+        <div class="mode-title">DIFÍCIL</div>
+        <div class="mode-desc">Para quien ya domina el juego.</div>
+        <ul class="dif-list" id="dif-list-dificil"></ul>
+      </div>
+    </div>
+    <button class="start-btn mode-go" onclick="iniciarPartida()">DESPLEGAR</button>
+  </div>
+</div>
+
+<div id="loading-screen">
+  <div class="scan-line"></div>
+  <div class="vignette"></div>
+  <h1 class="loading-title">INICIANDO DESPLIEGUE</h1>
+  <div class="loading-bar-container">
+    <div id="loading-bar" class="loading-bar"></div>
+  </div>
+  <p id="loading-status" class="loading-status">Conectando con la zona...</p>
+</div>
+
+<script src="js/mapas.js"></script>
+</body>
+</html>

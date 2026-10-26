@@ -1,0 +1,143 @@
+/* avisos, reaparicion, cuenta regresiva, final y modo por honor */
+
+/* configuracion en partida */
+#config-overlay{position:fixed;inset:0;z-index:52;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.88);}
+#config-overlay.visible{display:flex;}
+.cfg-panel{width:min(560px,calc(100vw - 32px));background:rgba(10,5,5,0.97);border:1px solid var(--blood);padding:26px 30px;box-shadow:0 0 30px rgba(200,0,0,0.2);}
+.cfg-row{display:grid;grid-template-columns:1fr 180px 40px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray);font-size:13px;letter-spacing:2px;color:var(--white);}
+.cfg-row small{font-size:10px;letter-spacing:1px;color:var(--text-dim);}
+.cfg-row input[type=range]{width:100%;accent-color:#ff4444;}
+.cfg-row input[type=checkbox]{width:22px;height:22px;accent-color:#ff4444;justify-self:start;}
+.cfg-row b{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#ffcc44;font-weight:normal;text-align:right;}
+
+/* instrucciones antes de la primera compra */
+#shop-help{position:fixed;inset:0;z-index:72;display:none;align-items:flex-start;justify-content:center;background:rgba(10,4,20,0.9);overflow:auto;padding:24px;}
+#shop-help.visible{display:flex;}
+.sh-panel{margin:auto;width:min(820px,100%);background:rgba(20,10,36,0.98);border:1px solid #8a4dff;box-shadow:0 0 50px rgba(138,77,255,0.3);padding:28px 32px;}
+.sh-title{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:5px;color:#c49bff;}
+.sh-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 20px;}
+.sh-step{background:rgba(36,18,60,0.9);border:1px solid rgba(138,77,255,0.35);padding:14px;font-size:13px;line-height:1.5;color:var(--white);}
+.sh-step b{display:block;font-family:'Bebas Neue',sans-serif;font-size:30px;color:#ffcc44;font-weight:normal;}
+.sh-list{display:grid;gap:8px;}
+.sh-row{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;font-size:13px;color:rgba(220,205,255,0.8);}
+.sh-row .ico{width:34px;height:34px;}
+.sh-row b{color:var(--white);letter-spacing:2px;font-family:'Bebas Neue',sans-serif;font-size:18px;font-weight:normal;margin-right:6px;}
+#sh-ok{margin-top:22px;width:100%;background:rgba(138,77,255,0.3);border:1px solid #c49bff;color:var(--white);padding:13px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;cursor:pointer;}
+#sh-ok:hover{background:rgba(138,77,255,0.6);}
+
+/* aviso de objetos disponibles en el mapa */
+#objetos-banner{position:fixed;top:24%;left:50%;transform:translateX(-50%);z-index:30;pointer-events:none;opacity:0;transition:opacity 0.4s;text-align:center;
+  background:rgba(20,10,36,0.85);border:1px solid #8a4dff;padding:14px 40px;box-shadow:0 0 30px rgba(138,77,255,0.4);}
+#objetos-banner.show{opacity:1;}
+#objetos-banner .t{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:6px;color:#c49bff;}
+#objetos-banner .s{font-size:13px;letter-spacing:2px;color:var(--white);}
+
+/* reaparicion */
+#respawn-overlay{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(60,0,0,0.55) 0%,rgba(0,0,0,0.85) 100%);}
+#respawn-overlay.visible{display:flex;}
+.rs-t{font-family:'Bebas Neue',sans-serif;font-size:110px;letter-spacing:14px;color:#ff2a2a;text-shadow:0 0 30px rgba(255,0,0,0.5);}
+.rs-s{font-size:18px;letter-spacing:5px;color:var(--white);}
+.rs-s b{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#ffcc44;font-weight:normal;}
+#hud-vitals.inmune .vital.vida .bar{box-shadow:0 0 14px #66ccff;border-color:#66ccff;animation:inmune 0.4s steps(2) infinite;}
+@keyframes inmune{50%{opacity:0.5;}}
+
+/* banner de mision objetivo */
+#mision-banner{position:fixed;top:30%;left:50%;transform:translateX(-50%);z-index:31;pointer-events:none;opacity:0;transition:opacity 0.4s;text-align:center;
+  background:rgba(30,20,0,0.85);border:1px solid #ffcc44;padding:14px 40px;box-shadow:0 0 30px rgba(255,190,40,0.35);white-space:nowrap;}
+#mision-banner.show{opacity:1;}
+#mision-banner .t{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:5px;color:#ffcc44;}
+#mision-banner .s{font-size:13px;letter-spacing:2px;color:var(--white);}
+.objetivo-txt{font-size:13px;letter-spacing:3px;color:#ffcc44;margin-top:2px;text-shadow:0 1px 4px #000;white-space:nowrap;}
+.wb-zombies.pasos{grid-template-columns:repeat(4,1fr);}
+.wb-step{background:rgba(25,8,8,0.9);border:1px solid var(--gray);padding:16px;}
+.wb-step > b{display:block;font-family:'Bebas Neue',sans-serif;font-size:40px;color:#ffcc44;font-weight:normal;line-height:1;margin-bottom:4px;}
+@media (max-width:1100px){ .wb-zombies.pasos{grid-template-columns:repeat(2,1fr);} }
+
+/* en linea no hay pausa texto gigante al presionar esc */
+#no-pausa{position:fixed;inset:0;z-index:59;pointer-events:none;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,rgba(120,0,0,0.35),rgba(0,0,0,0) 70%);}
+#no-pausa.visible{display:flex;}
+#no-pausa .np-txt{font-family:'Bebas Neue',sans-serif;font-size:clamp(70px,11vw,190px);line-height:0.92;color:#ff2a2a;letter-spacing:6px;text-shadow:0 0 40px rgba(255,0,0,0.7),0 8px 0 rgba(0,0,0,0.7);}
+#no-pausa .np-sub{margin-top:18px;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:5px;color:#fff;text-shadow:0 2px 6px #000;}
+#no-pausa.golpe .np-txt{animation:npGolpe 0.45s ease-out;}
+@keyframes npGolpe{0%{transform:scale(1.35) rotate(-2deg);opacity:0;}40%{transform:scale(0.95) rotate(1deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
+
+/* cuenta regresiva de los ultimos 10 segundos */
+#countdown{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:58;pointer-events:none;display:none;
+  font-family:'Bebas Neue',sans-serif;font-size:220px;line-height:1;color:#ff2a2a;text-shadow:0 0 40px rgba(255,0,0,0.6),0 6px 0 rgba(0,0,0,0.6);}
+#countdown.visible{display:block;}
+#countdown.pulso{animation:cdPulso 1s ease-out;}
+@keyframes cdPulso{0%{transform:translate(-50%,-50%) scale(1.5);opacity:0;}20%{opacity:1;}100%{transform:translate(-50%,-50%) scale(1);opacity:0.85;}}
+
+/* luz del helicoptero ultima oleada */
+#heli-white{position:fixed;inset:0;z-index:56;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#fffdf2 55%,#f2efe4 100%);}
+#heli-text{position:absolute;top:18%;left:0;right:0;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:6px;color:#3a2a10;opacity:0;transition:opacity 0.6s;}
+
+/* fin */
+#fin-screen{position:fixed;inset:0;z-index:76;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#fdfcf6;color:#1a1410;text-align:center;}
+#fin-screen.visible{display:flex;animation:finEntra 1.6s ease-out;}
+@keyframes finEntra{from{opacity:0;}to{opacity:1;}}
+.fin-t{font-family:'Bebas Neue',sans-serif;font-size:180px;letter-spacing:30px;line-height:1;margin-left:30px;}
+.fin-l{font-size:13px;letter-spacing:6px;color:#6b5f52;}
+.fin-score{font-family:'Bebas Neue',sans-serif;font-size:90px;letter-spacing:4px;line-height:1;}
+.fin-sub{font-size:15px;letter-spacing:3px;color:#3b3229;}
+.fin-rec{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#a06a00;margin-top:4px;}
+.fin-btns{display:flex;gap:12px;margin-top:22px;}
+.fin-btns button{background:#1a1410;color:#fdfcf6;border:none;padding:13px 30px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;cursor:pointer;}
+.fin-btns button.sec{background:transparent;color:#1a1410;border:1px solid #1a1410;}
+
+/* por honor la pantalla se apaga y el final es oscuro */
+body[data-modo="zona"] #heli-white{background:radial-gradient(ellipse at center,#120000 0%,#000 70%);}
+body[data-modo="zona"] #heli-text{color:#c22;}
+body[data-modo="zona"] #fin-screen{background:#030000;color:#eee;}
+body[data-modo="zona"] .fin-l, body[data-modo="zona"] .fin-row .det, body[data-modo="zona"] .fin-row .pos{color:#a88;}
+body[data-modo="zona"] .fin-sub{color:#cbb;}
+body[data-modo="zona"] .fin-t{color:#d22;text-shadow:0 0 40px rgba(255,0,0,0.4);}
+body[data-modo="zona"] .fin-rows{border-top-color:#d22;}
+body[data-modo="zona"] .fin-row{border-bottom-color:rgba(255,255,255,0.12);}
+body[data-modo="zona"] .fin-row.first{background:rgba(220,30,30,0.18);}
+body[data-modo="zona"] .fin-win{color:#ff5a3a;}
+body[data-modo="zona"] .fin-btns button{background:#d22;color:#fff;}
+body[data-modo="zona"] .fin-btns button.sec{background:transparent;color:#eee;border-color:#eee;}
+
+/* si la ventana es chica, las pantallas se pueden desplazar */
+#lobby-screen,#pause-overlay,#shop-overlay,#config-overlay,#gameover-overlay,#ranking-overlay,#fin-screen{overflow-y:auto;justify-content:safe center;}
+#pause-overlay,#shop-overlay,#config-overlay{align-items:safe center;}
+
+/* tabla de resultados en la pantalla blanca en linea */
+.fin-tabla{display:none;width:min(560px,calc(100vw - 32px));margin-top:14px;}
+#fin-screen.online .fin-tabla{display:block;}
+#fin-screen.online .fin-t{font-size:110px;letter-spacing:20px;margin-left:20px;}
+#fin-screen.online .fin-score{font-size:64px;}
+.fin-win{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:5px;color:#a06a00;line-height:1.1;min-height:6px;}
+.fin-rows{border-top:2px solid #1a1410;margin-top:6px;}
+.fin-row{display:grid;grid-template-columns:34px 1fr auto auto;gap:14px;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(26,20,16,0.18);font-size:15px;letter-spacing:2px;text-align:left;}
+.fin-row .pos{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#6b5f52;}
+.fin-row .pts{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;}
+.fin-row .det{font-size:12px;color:#6b5f52;}
+.fin-row.first{background:rgba(255,190,40,0.18);}
+.fin-row.first .pos{color:#a06a00;}
+.fin-row.me .nom{font-weight:700;}
+.fin-row.fuera{opacity:0.55;}
+
+/* modo zona borde rojo cuando estas afuera */
+body.fuera-zona #damage-flash{box-shadow:inset 0 0 160px rgba(255,30,30,0.55);animation:fueraZona 1s ease-in-out infinite;}
+@keyframes fueraZona{50%{box-shadow:inset 0 0 90px rgba(255,30,30,0.3);}}
+.pt-item.nulo{color:#aaa;}
+body[data-modo="zona"] .cash-val{display:none !important;}   /* sin tienda no hay dinero */
+.pt-item.nulo b{color:#888;}
+
+/* texto de puntos que aparece por cada accion */
+#puntos-feed{position:fixed;left:calc(50% + 46px);top:calc(50% - 30px);z-index:57;pointer-events:none;display:flex;flex-direction:column-reverse;gap:2px;}
+.pt-item{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff;text-shadow:0 2px 4px #000,0 0 10px rgba(0,0,0,0.6);white-space:nowrap;animation:ptSube 1.9s ease-out forwards;}
+.pt-item b{color:#ffcc44;font-weight:normal;}
+.pt-item.grande{font-size:30px;}
+@keyframes ptSube{0%{opacity:0;transform:translate(-8px,6px) scale(1.2);}12%{opacity:1;transform:translate(0,0) scale(1);}75%{opacity:1;}100%{opacity:0;transform:translate(0,-26px);}}
+
+/* briefing solo zombies mas consejo */
+.wb-zombies.uno{grid-template-columns:minmax(0,640px);justify-content:center;}
+.wb-zombies.uno .wb-z{grid-template-columns:120px 1fr;padding:20px;}
+.wb-zombies.uno .wb-z svg{width:120px;height:154px;}
+.wb-zombies.uno .wb-zdesc{font-size:14px;}
+.briefing{grid-template-columns:1fr 1fr 1fr !important;}
+.item-wrap.on .item-slot{border-color:#ffd95a;box-shadow:0 0 16px rgba(255,217,90,0.45);}

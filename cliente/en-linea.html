@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OUTBREAK - En linea</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/menu.css"/>
+<link rel="stylesheet" href="css/en-linea.css"/>
+
+<script src="js/comun/cursor.js"></script>
+</head>
+<body>
+<div class="mp-wrap">
+
+  <a href="index.html" class="back-btn">← VOLVER AL MENÚ</a>
+
+  <div class="mp-header">
+    <h1>EN LÍNEA</h1>
+    <p>COORDINA. SOBREVIVE. O CEDE AL CAOS.</p>
+  </div>
+
+  <!-- grid principal -->
+  <div class="mp-grid" id="main-grid">
+
+    <!-- lista de salas -->
+    <div class="rooms-panel">
+      <div class="panel-title">
+        SALAS ACTIVAS
+        <button class="refresh-btn" onclick="cargarSalas()">ACTUALIZAR</button>
+      </div>
+      <div class="rooms-list" id="rooms-list">
+        <div class="rooms-empty"><span>BUSCANDO SALAS...</span></div>
+      </div>
+      <p class="mp-msg" id="join-msg" style="margin-top:12px;"></p>
+      <button class="btn-join" id="btn-join" onclick="unirseASala()" disabled style="margin-top:12px;">
+        UNIRSE A SALA SELECCIONADA
+      </button>
+    </div>
+
+    <!-- crear sala -->
+    <div class="create-panel">
+      <div class="panel-title" style="margin-bottom:8px;">CREAR SALA</div>
+
+      <div>
+        <div class="form-label">NOMBRE DE SALA</div>
+        <input type="text" class="form-input" id="room-name" placeholder="Ej: ZONA OMEGA" maxlength="30"/>
+      </div>
+
+      <div>
+        <div class="form-label">MAPA</div>
+        <select class="form-select" id="room-map">
+          <option value="CIUDAD DEVASTADA">Ciudad Devastada</option>
+          <option value="HOSPITAL INFECTADO">Hospital Infectado</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="form-label">MÁXIMO JUGADORES</div>
+        <select class="form-select" id="room-max">
+          <option value="2">2 OPERATIVOS</option>
+          <option value="3">3 OPERATIVOS</option>
+          <option value="4" selected>4 OPERATIVOS</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="form-label">MODO</div>
+        <div class="mode-grid">
+          <div class="mode-card selected" id="mode-survival" onclick="selectMode('survival')">
+            <div class="mode-name">RESISTE</div>
+            <div class="mode-desc">3 oleadas con tienda hasta que llegue el rescate</div>
+          </div>
+          <div class="mode-card" id="mode-zona" onclick="selectMode('zona')">
+            <div class="mode-name">POR HONOR</div>
+            <div class="mode-desc">3 min en una zona que se encoge, sin tienda</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="form-label">DIFICULTAD</div>
+        <select class="form-select" id="room-dif" onchange="mostrarInfoDif()">
+          <option value="estandar" selected>ESTÁNDAR</option>
+          <option value="dificil">DIFÍCIL</option>
+        </select>
+        <div class="dif-info" id="dif-info"></div>
+      </div>
+
+      <p class="mp-msg" id="create-msg"></p>
+      <button class="btn-create" id="btn-create" onclick="crearSala()">CREAR PARTIDA</button>
+    </div>
+  </div>
+
+  <!-- sala de espera aparece tras crear unirse -->
+  <div id="waiting-room">
+    <div class="wr-title">SALA DE ESPERA</div>
+    <div class="wr-subtitle">ESPERA A QUE TODOS ESTÉN LISTOS</div>
+    <div class="wr-sala">
+      SALA: <strong id="wr-nombre">---</strong> &nbsp;|&nbsp;
+      MAPA: <strong id="wr-mapa">---</strong> &nbsp;|&nbsp;
+      MODO: <strong id="wr-modo">---</strong>
+    </div>
+
+    <div class="wr-players" id="wr-players">
+      <!-- se llena dinamicamente -->
+    </div>
+
+    <div class="wr-color">
+      <div class="form-label">COLOR DE TU CAMISA</div>
+      <div class="swatches" id="swatches"></div>
+    </div>
+
+    <p class="waiting-pulse" id="waiting-txt">ESPERANDO JUGADORES...</p>
+
+    <div style="margin-top:16px;">
+      <button class="btn-listo" id="btn-listo" onclick="toggleListo()">ESTOY LISTO</button>
+      <button class="btn-start" id="btn-start" onclick="iniciarPartida()">INICIAR PARTIDA</button>
+      <button class="btn-leave" onclick="salirDeSala()">SALIR</button>
+    </div>
+  </div>
+
+  <!-- status bar -->
+  <div class="status-bar">
+    <span><span class="online-dot"></span><span id="online-count">0</span> OPERATIVO(S) EN LÍNEA</span>
+    <span>SERVIDOR: <span id="server-status" style="color:#ff4444">CONECTANDO...</span></span>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/en-linea.js"></script>
+</body>
+</html>

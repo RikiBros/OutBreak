@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OUTBREAK - Configuracion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/configuracion.css"/>
+<script src="js/comun/cursor.js"></script>
+</head>
+<body>
+
+
+  <!-- fondo mismo video que menu y scores -->
+  <video id="bg-video" autoplay loop muted playsinline>
+    <source src="media/menu.mp4" type="video/mp4">
+  </video>
+  <div id="vignette"></div>
+  <div id="grad-bottom"></div>
+  <div id="scan"></div>
+  <div id="hud-border"></div>
+
+  <div id="app">
+
+    <!-- top right -->
+    <div id="top-right">
+      <span class="red-dot"></span> v1.0.0 - 2026
+    </div>
+
+    <!-- middle panel principal -->
+    <div id="middle">
+
+      <div class="screen-header">
+        <h1 class="screen-title">CONFIGURACIÓN</h1>
+        <button class="back-btn" onclick="location.href='index.html'">← REGRESAR</button>
+      </div>
+
+      <div class="config-panel">
+        <div class="config-grid">
+
+          <!-- audio -->
+          <div class="config-section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              AUDIO
+            </div>
+            <div class="config-row">
+              <span class="config-label">Música</span>
+              <div class="slider-container">
+                <input type="range" id="musicVolume" class="red-fill" min="0" max="100" value="100" oninput="syncSlider(this,'musicVal')">
+                <span class="slider-val" id="musicVal">100</span>
+              </div>
+            </div>
+            <div class="config-row">
+              <span class="config-label">Efectos</span>
+              <div class="slider-container">
+                <input type="range" id="sfxVolume" class="red-fill" min="0" max="100" value="45" oninput="syncSlider(this,'sfxVal')">
+                <span class="slider-val" id="sfxVal">45</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- controles -->
+          <div class="config-section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M8 10v4"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="18.5" cy="10" r="1" fill="currentColor"/></svg>
+              CONTROLES
+            </div>
+            <div class="config-row">
+              <span class="config-label">Sensibilidad</span>
+              <div class="slider-container">
+                <input type="range" id="sensitivity" class="red-fill" min="1" max="100" value="50" oninput="syncSlider(this,'sensVal')">
+                <span class="slider-val" id="sensVal">50</span>
+              </div>
+            </div>
+            <div class="config-row">
+              <span class="config-label">Invertir eje Y</span>
+              <label class="toggle">
+                <input type="checkbox" id="invertY">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- graficos -->
+          <div class="config-section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+              GRÁFICOS
+            </div>
+            <div class="config-row">
+              <span class="config-label">Sombras</span>
+              <label class="toggle">
+                <input type="checkbox" id="shadows" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- perfil -->
+          <div class="config-section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              PERFIL
+            </div>
+            <div class="config-row">
+              <span class="config-label">Nombre</span>
+              <input type="text" id="playerName" maxlength="20" placeholder="Inicia sesión" style="width:160px;">
+            </div>
+          </div>
+
+        </div><!-- config grid -->
+
+        <!-- botones dentro del panel -->
+        <div class="save-area">
+          <span id="save-msg"></span>
+          <button class="btn btn-dim" onclick="resetConfig()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            RESTABLECER
+          </button>
+          <button class="btn btn-primary" onclick="saveConfig()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            GUARDAR
+          </button>
+        </div>
+
+      </div><!-- config panel -->
+
+    </div><!-- middle -->
+
+  </div><!-- app -->
+
+  <script src="js/configuracion.js"></script>
+</body>
+</html>

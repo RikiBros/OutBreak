@@ -1,0 +1,312 @@
+/* estilos propios del menu principal, el video, el login y la ventana de jugar */
+
+/* mejora 1 logo con salpicadura de sangre svg */
+/* reemplaza la linea roja que partia outbreak */
+.logo-main {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+
+}
+
+/* contenedor de la salpicadura cubre la mitad del logo */
+.blood-splash-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* centrado vertical ajusta top para mover la mancha */
+  /* si el logo tiene 100px de alto, 45 por ciento zona central */
+  top: 42%;
+  height: 40px;           /* altura de la zona de salpicadura */
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.blood-splash-wrap svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* animacion la mancha aparece fundida cuando carga la pagina */
+@keyframes bloodDrip {
+  0%   { opacity: 0; transform: scaleY(0.3) scaleX(0.8); }
+  60%  { opacity: 1; transform: scaleY(1.05) scaleX(1); }
+  100% { opacity: 1; transform: scaleY(1) scaleX(1); }
+}
+
+.blood-splash-wrap svg {
+  animation: bloodDrip 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  transform-origin: center top;
+}
+
+/* mejora 2 efecto vhs rewind al terminar video */
+
+/* overlay que se activa durante el rewind */
+#vhs-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+#vhs-overlay.active { opacity: 1; }
+
+/* lineas horizontales de scanlines vhs */
+#vhs-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+}
+
+/* ruido y distorsion cromatica */
+#vhs-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,0,0,0.06) 0%,
+      transparent 30%,
+      rgba(0,255,255,0.06) 70%,
+      transparent 100%
+    );
+  animation: vhsNoise 0.08s steps(1) infinite;
+}
+
+@keyframes vhsNoise {
+  0%   { transform: translateX(-2px) translateY(0); }
+  25%  { transform: translateX(2px) translateY(-1px); }
+  50%  { transform: translateX(-1px) translateY(1px); }
+  75%  { transform: translateX(1px) translateY(-2px); }
+  100% { transform: translateX(-2px) translateY(0); }
+}
+
+/* banda de distorsion que sube efecto de cabezal vhs */
+#vhs-band {
+  position: absolute;
+  left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(200,0,0,0.12) 30%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(200,0,0,0.12) 70%,
+    transparent 100%
+  );
+  animation: vhsBandMove 0.4s linear infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes vhsBandMove {
+  0%   { top: 100%; }
+  100% { top: -60px; }
+}
+
+/* badge rewind en la esquina */
+#vhs-rewind-label {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: #ff2222;
+  text-shadow: 0 0 12px rgba(255,0,0,0.8), 2px 0 0 cyan;
+  opacity: 0;
+  animation: vhsBlink 0.3s steps(1) infinite;
+}
+
+/* solo visible cuando el overlay esta activo */
+#vhs-overlay.active #vhs-rewind-label {
+  opacity: 1;
+}
+
+@keyframes vhsBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* distorsion horizontal del video durante el rewind */
+@keyframes videoGlitch {
+  0%   { filter: brightness(1.2) saturate(0.4) hue-rotate(0deg); transform: skewX(0deg); }
+  20%  { filter: brightness(0.8) saturate(0.2) hue-rotate(180deg); transform: skewX(-1.5deg) scaleX(1.01); }
+  40%  { filter: brightness(1.4) saturate(0.1) hue-rotate(90deg); transform: skewX(1deg) scaleX(0.99); }
+  60%  { filter: brightness(0.6) saturate(0.3) hue-rotate(270deg); transform: skewX(-0.5deg); }
+  80%  { filter: brightness(1.1) saturate(0.2) hue-rotate(45deg); transform: skewX(0.8deg); }
+  100% { filter: brightness(1.2) saturate(0.4) hue-rotate(0deg); transform: skewX(0deg); }
+}
+
+#bg-gif.rewinding {
+  animation: videoGlitch 0.12s linear infinite;
+}
+
+/* texto rebobinando que aparece encima del video */
+#vhs-rewind-label::before {
+  content: 'REBOBINANDO';
+}
+
+/* modal auth login registro */
+#auth-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+#auth-modal.open { display: flex; }
+
+.auth-box {
+  width: 380px;
+  background: #0a0101;
+  border: 1px solid rgba(180,0,0,0.5);
+  box-shadow: 0 0 40px rgba(200,0,0,0.15);
+  padding: 32px 36px;
+  font-family: 'Oswald', sans-serif;
+  position: relative;
+}
+.auth-box h2 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 36px;
+  color: #ff2222;
+  letter-spacing: 5px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.auth-box .auth-sub {
+  text-align: center;
+  font-size: 10px;
+  color: rgba(200,150,150,0.5);
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+}
+/* modal como quieres jugar */
+#play-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0,0,0,0.88);
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+#play-modal.open { display: flex; }
+.play-box { width: 460px; }
+.play-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.play-option {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 22px 12px;
+  background: rgba(20,5,5,0.9);
+  border: 1px solid rgba(180,0,0,0.35);
+  color: #e8e8e8;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.play-option:hover {
+  background: rgba(180,0,0,0.25);
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(200,0,0,0.25);
+}
+.play-icon { width: 34px; height: 34px; color: #ff4444; }
+.play-icon svg { width: 100%; height: 100%; }
+.play-name { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; }
+.play-desc { font-size: 10px; letter-spacing: 2px; color: rgba(200,150,150,0.55); }
+
+#google-btn-wrap {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+}
+.auth-msg {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-top: 12px;
+  min-height: 18px;
+  color: #ff4444;
+}
+.auth-msg.ok { color: #44ff88; }
+.auth-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: rgba(200,150,150,0.4);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.auth-close:hover { color: #ff4444; }
+
+/* badge usuario logueado */
+#user-badge {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 500;
+  background: rgba(10,0,0,0.85);
+  border: 1px solid rgba(180,0,0,0.4);
+  padding: 8px 16px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: rgba(200,150,150,0.8);
+  backdrop-filter: blur(4px);
+}
+#user-badge span { color: #ff4444; }
+#user-badge img {
+  width: 22px; height: 22px; border-radius: 50%;
+  vertical-align: middle; margin-right: 8px;
+  border: 1px solid rgba(180,0,0,0.6);
+}
+#user-badge button {
+  background: transparent;
+  border: none;
+  color: rgba(200,150,150,0.4);
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-family: 'Oswald', sans-serif;
+}
+#user-badge button:hover { color: #ff4444; }
+
+/* boton login cuando no hay sesion */
+.btn-login-trigger {
+  background: rgba(180,0,0,0.15);
+  border: 1px solid rgba(180,0,0,0.4);
+  color: rgba(200,150,150,0.7);
+  padding: 6px 14px;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 13px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 500;
+}
+.btn-login-trigger:hover {
+  background: rgba(180,0,0,0.4);
+  border-color: #ff4444;
+  color: #e8e8e8;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OUTBREAK - Puntuaciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/menu.css"/>
+<link rel="stylesheet" href="css/puntuaciones.css"/>
+<script src="js/comun/cursor.js"></script>
+</head>
+<body>
+<div class="scores-wrap">
+
+  <a href="index.html" class="back-btn">← VOLVER AL MENÚ</a>
+
+  <div class="scores-header">
+    <h1>PUNTUACIONES</h1>
+    <p>REGISTRO DE OPERATIVOS — ZONA DE CUARENTENA</p>
+  </div>
+
+  <!-- tabs global personal -->
+  <div class="tabs-row">
+    <button class="score-tab active" id="tab-global-btn" onclick="switchTab('global')">RANKING GLOBAL</button>
+    <button class="score-tab"        id="tab-personal-btn" onclick="switchTab('personal')">MIS PUNTUACIONES</button>
+  </div>
+
+  <!-- filtros de mapa -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" onclick="filtrarMapa('')"             id="f-all">TODOS</button>
+    <button class="filter-btn"        onclick="filtrarMapa('CIUDAD DEVASTADA')"    id="f-ciudad">CIUDAD</button>
+    <button class="filter-btn"        onclick="filtrarMapa('HOSPITAL INFECTADO')"  id="f-hospital">HOSPITAL</button>
+    <button class="filter-btn"        onclick="filtrarMapa('AEROPUERTO CAÍDO')"    id="f-aero">AEROPUERTO</button>
+  </div>
+
+  <!-- personal info solo en tab personal -->
+  <div id="personal-header-box" style="display:none" class="personal-header">
+    <div class="ph-name" id="ph-username">---</div>
+    <div class="ph-stats">
+      PARTIDAS: <span id="ph-partidas">0</span> &nbsp;|&nbsp;
+      PUNTOS TOTALES: <span id="ph-puntos">0</span>
+    </div>
+  </div>
+
+  <!-- tabla -->
+  <div class="scores-table-wrap">
+    <table>
+      <thead>
+        <tr id="table-head">
+          <th>#</th>
+          <th>OPERATIVO</th>
+          <th>PUNTOS</th>
+          <th>OLEADA</th>
+          <th>BAJAS</th>
+          <th>MAPA</th>
+          <th>FECHA</th>
+        </tr>
+      </thead>
+      <tbody id="scores-body">
+        <tr class="state-row">
+          <td colspan="7">
+            <div class="spinner"></div><br>
+            CARGANDO REGISTROS...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="js/puntuaciones.js"></script>
+</body>
+</html>

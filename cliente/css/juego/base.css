@@ -1,0 +1,162 @@
+/* estilos base del juego, botones, letras y efectos */
+
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Oswald:wght@400;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blood:       #8B0000;
+  --blood-light: #C0392B;
+  --blood-glow:  #E74C3C;
+  --dark:        #0a0a0a;
+  --dark2:       #111111;
+  --dark3:       #1a1a1a;
+  --dark4:       #222222;
+  --gray:        #333333;
+  --gray2:       #444444;
+  --text:        #cccccc;
+  --text-dim:    #888888;
+  --white:       #f0f0f0;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Oswald', sans-serif;
+  overflow-x: hidden;
+}
+
+/* scanlines globales */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* botones generales */
+.btn {
+  background: transparent;
+  border: 1px solid var(--blood);
+  color: var(--white);
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  letter-spacing: 3px;
+  padding: 12px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+}
+.btn:hover        { background: var(--blood); color: #fff; }
+.btn.btn-primary  { background: var(--blood); }
+.btn.btn-dim      { color: var(--text-dim); border-color: var(--gray); font-size: 12px; }
+.btn.btn-dim:hover{ background: var(--gray); color: var(--text); }
+
+/* esquinas decorativas */
+.corners { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+.corners::before,
+.corners::after,
+.corners .c3,
+.corners .c4 {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--blood);
+  border-style: solid;
+}
+.corners::before  { top:8px; left:8px;  border-width: 2px 0 0 2px; }
+.corners::after   { top:8px; right:8px; border-width: 2px 2px 0 0; }
+.corners .c3      { bottom:8px; left:8px;  border-width: 0 0 2px 2px; }
+.corners .c4      { bottom:8px; right:8px; border-width: 0 2px 2px 0; }
+
+/* sangre cayendo */
+.blood-drips span {
+  display: block;
+  position: absolute;
+  top: 0;
+  width: 3px;
+  background: var(--blood);
+  border-radius: 0 0 3px 3px;
+}
+
+/* encabezado de pantalla interna */
+.screen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--blood);
+}
+.screen-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: var(--blood-glow);
+}
+.back-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--gray2);
+  color: var(--text-dim);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.back-btn:hover { border-color: var(--blood); color: var(--blood-light); }
+
+/* tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 1rem; }
+.tab {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border: 1px solid var(--gray);
+  color: var(--text-dim);
+  cursor: pointer;
+  background: transparent;
+  text-transform: uppercase;
+}
+.tab.active {
+  border-color: var(--blood);
+  color: var(--blood-glow);
+  background: rgba(139,0,0,0.15);
+}
+
+/* hud barra de vida */
+.health-bar {
+  width: 130px; height: 8px;
+  background: var(--dark4);
+  border: 1px solid var(--gray);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.health-fill {
+  height: 100%;
+  background: var(--blood-light);
+  border-radius: 1px;
+  transition: width 0.3s;
+}
+
+/* mapa miniatura */
+#minimap {
+  width: 80px; height: 60px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid var(--blood);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}

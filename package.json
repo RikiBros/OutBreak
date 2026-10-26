@@ -1,0 +1,15 @@
+{
+  "name": "outbreak-game",
+  "version": "2.0.0",
+  "description": "OutBreak, juego de terror y supervivencia en 3D para la web, con partidas en linea",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "socket.io": "^4.6.1"
+  }
+}

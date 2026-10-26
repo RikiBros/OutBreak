@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OUTBREAK - Partida</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/juego/base.css"/>
+<link rel="stylesheet" href="css/juego/pantallas.css"/>
+<link rel="stylesheet" href="css/juego/hud.css"/>
+<link rel="stylesheet" href="css/juego/avisos.css"/>
+
+<script src="js/comun/cursor.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three":              "https://unpkg.com/three@0.128.0/build/three.module.js",
+    "three/examples/jsm/":"https://unpkg.com/three@0.128.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- revisando la sesion -->
+<div id="auth-check">
+  <h2>OUTBREAK</h2>
+  <div class="auth-spinner"></div>
+  <p class="auth-msg">VERIFICANDO PROTOCOLO DE ACCESO...</p>
+</div>
+
+<!-- intro con la historia -->
+<div id="intro-screen">
+  <video id="intro-video" muted loop playsinline preload="none">
+    <source src="media/menu.mp4" type="video/mp4">
+  </video>
+  <div class="intro-box">
+    <div class="intro-place" id="intro-place">---</div>
+    <div class="intro-time" id="intro-time">---</div>
+    <div id="intro-text"></div>
+    <div class="intro-progress" id="intro-progress"></div>
+    <div class="intro-actions">
+      <span class="intro-hint">ESPACIO / CLIC — CONTINUAR &nbsp;·&nbsp; ESC — SALTAR</span>
+      <div>
+        <button class="intro-btn ghost" onclick="terminarIntro()">SALTAR</button>
+        <button class="intro-btn" id="intro-next" onclick="avanzarIntro()">CONTINUAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- pantalla para desplegar, el clic sirve para capturar el mouse -->
+<div id="lobby-screen">
+
+  <div class="lobby-header">
+    <h1>OUTBREAK</h1>
+    <p class="player-tag">OPERATIVO: <span id="lobby-username">---</span></p>
+    <div class="map-tag" id="lobby-map-tag">ZONA: ---</div>
+  </div>
+
+  <div class="lobby-panel">
+    <div class="briefing">
+      <div class="briefing-item"><span class="form-label">PARTIDA</span><span id="lobby-tipo">---</span></div>
+      <div class="briefing-item"><span class="form-label">MODO</span><span id="lobby-modo">---</span></div>
+      <div class="briefing-item"><span class="form-label">DIFICULTAD</span><span id="lobby-dif">---</span></div>
+    </div>
+    <div class="pause-side-title" style="margin-bottom:10px">CONTROLES</div>
+    <div class="controles-grid" style="margin-bottom:20px"></div>
+    <div class="lobby-action">
+      <button class="btn-lobby-main" id="lobby-action-btn" onclick="desplegar()">DESPLEGAR</button>
+      <button class="btn-lobby-sec" onclick="location.href='index.html'">SALIR</button>
+    </div>
+  </div>
+
+  <div class="lobby-footer">
+    <span><span class="online-dot"></span> <span id="online-count">1</span> OPERATIVO(S) EN LA PARTIDA</span>
+    <span>SERVIDOR: <span style="color:var(--blood-light)" id="server-status">LOCAL</span></span>
+  </div>
+
+</div>
+
+<!-- aqui se dibuja el juego -->
+<canvas id="gameCanvas"></canvas>
+<div id="damage-flash"></div>
+<div id="ads-vignette"></div>
+
+<!-- hud -->
+<div id="hud">
+  <!-- arriba izquierda zona, operativo y compañeros -->
+  <div id="hud-top-left">
+    <div>
+      <div class="hud-label">ZONA ACTIVA</div>
+      <div class="map-name-val" id="active-map-name">---</div>
+    </div>
+    <div>
+      <div class="hud-label">OPERATIVO</div>
+      <div style="color:var(--white);letter-spacing:1px;" id="hud-username">---</div>
+    </div>
+    <div id="hud-players">
+      <div class="players-row" id="players-row">
+        <div class="player-pip you" id="pip-local">TÚ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- arriba centro oleada y tiempo -->
+  <div id="hud-wave">
+    <div class="wave-label" id="wave-label">OLEADA</div>
+    <div class="wave-num" id="wave-num">1/3</div>
+    <div class="wave-timer" id="wave-timer">1:00</div>
+    <div class="objetivo-txt" id="objetivo-txt"></div>
+  </div>
+
+  <!-- arriba derecha puntos, dinero y radar -->
+  <div id="hud-score">
+    <div class="hud-label">PUNTOS</div>
+    <div class="score-val" id="score-val">0</div>
+    <div class="cash-val"><span class="ico" data-ico="dinero"></span><span id="cash-val">$0</span></div>
+  </div>
+  <div id="minimap">
+    <div class="minimap-label">RADAR</div>
+    <canvas id="minimapCanvas" width="180" height="140"></canvas>
+  </div>
+  <!-- marcador de bajas solo en linea -->
+  <div id="hud-board">
+    <div class="board-title">PUNTOS</div>
+    <div id="board-rows"></div>
+  </div>
+
+  <!-- descanso entre oleadas -->
+  <div id="intermission">
+    <div class="inter-title" id="inter-title">OLEADA SUPERADA</div>
+    <div class="inter-sub" id="inter-sub-solo">SIGUIENTE OLEADA EN <b id="inter-time">20</b>s &nbsp;·&nbsp; <kbd>B</kbd> ABRIR TIENDA</div>
+    <div class="inter-sub" id="inter-listos" style="display:none"></div>
+  </div>
+
+  <div id="crosshair">
+    <svg width="32" height="32" viewBox="0 0 32 32">
+      <line x1="16" y1="3"  x2="16" y2="11" stroke="#C0392B" stroke-width="1.5"/>
+      <line x1="16" y1="21" x2="16" y2="29" stroke="#C0392B" stroke-width="1.5"/>
+      <line x1="3"  y1="16" x2="11" y2="16" stroke="#C0392B" stroke-width="1.5"/>
+      <line x1="21" y1="16" x2="29" y2="16" stroke="#C0392B" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="2" fill="none" stroke="#C0392B" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- abajo izquierda vida, escudo y estamina -->
+  <div id="hud-vitals">
+    <div class="vital escudo" id="shield-wrap" style="display:none">
+      <span class="ico" data-ico="escudo"></span>
+      <div class="bar"><div id="shield-fill" style="width:0%"></div></div>
+      <div class="num"><span id="shield-cur">0</span></div>
+    </div>
+    <div class="vital vida">
+      <span class="ico" data-ico="vida"></span>
+      <div class="bar"><div id="health-fill" style="width:100%"></div></div>
+      <div class="num"><span id="health-cur">100</span>/<span id="health-max">100</span></div>
+    </div>
+    <div class="vital estamina" id="stamina-wrap">
+      <span class="ico" data-ico="estamina"></span>
+      <div class="bar"><div id="stamina-fill" style="width:100%"></div></div>
+      <div class="num"><span id="stamina-cur">100</span>%</div>
+    </div>
+  </div>
+
+  <!-- abajo centro objetos se dibujan con js -->
+  <div id="hud-items"></div>
+
+  <!-- abajo derecha municion -->
+  <div id="hud-ammo">
+    <div class="hud-label" id="ammo-label">PISTOLA</div>
+    <div class="ammo-val" id="ammo-val">20<small>/ 20</small></div>
+    <div id="reload-text"></div>
+    <div id="reload-bar"><div id="reload-fill"></div></div>
+  </div>
+
+  <div id="wave-alert">OLEADA ENTRANTE</div>
+</div>
+
+<!-- configuracion dentro de la partida -->
+<div id="config-overlay">
+  <div class="cfg-panel">
+    <div class="pause-title" style="margin-bottom:18px">CONFIGURACIÓN</div>
+    <div class="cfg-row"><span>SENSIBILIDAD DEL MOUSE</span><input type="range" id="cfg-sens" min="1" max="100"><b id="cfg-sens-v">50</b></div>
+    <div class="cfg-row"><span>INVERTIR EJE Y</span><input type="checkbox" id="cfg-inv"></div>
+    <div class="cfg-row"><span>SOMBRAS <small>(apágalas si el juego va lento)</small></span><input type="checkbox" id="cfg-sombras"></div>
+    <div class="cfg-row"><span>MÚSICA</span><input type="range" id="cfg-musica" min="0" max="100"><b id="cfg-musica-v">100</b></div>
+    <div class="cfg-row"><span>EFECTOS</span><input type="range" id="cfg-efectos" min="0" max="100"><b id="cfg-efectos-v">100</b></div>
+    <div class="pause-nav" style="margin-top:20px"><button onclick="cerrarConfig()">GUARDAR Y VOLVER</button></div>
+  </div>
+</div>
+
+<!-- instrucciones de la tienda solo la primera vez -->
+<div id="shop-help">
+  <div class="sh-panel">
+    <div class="sh-title">ASÍ FUNCIONA LA TIENDA</div>
+    <div class="sh-steps">
+      <div class="sh-step"><b>1</b>Compras con el dinero que ganas eliminando zombies: caminante $5, corredor $8, tanque $15.</div>
+      <div class="sh-step"><b>2</b>El Chatarrero <u>no te lo da en la mano</u>: lo deja en algún punto del mapa, marcado con un haz de luz de color y en el radar.</div>
+      <div class="sh-step"><b>3</b>Camina encima para recogerlo. Los objetos se usan con su tecla; las mejoras se activan solas al recogerlas.</div>
+    </div>
+    <div class="sh-list" id="sh-list"></div>
+    <button id="sh-ok" onclick="cerrarAyudaTienda()">ENTENDIDO — ABRIR TIENDA</button>
+  </div>
+</div>
+
+<div id="respawn-overlay"><div class="rs-t">CAÍSTE</div><div class="rs-s">REAPARECES EN <b id="respawn-t">5</b></div></div>
+<div id="mision-banner"><div class="t"></div><div class="s"></div></div>
+<div id="objetos-banner"><div class="t">OBJETOS EN EL MAPA DISPONIBLES</div><div class="s">BÚSCALOS POR SU HAZ DE LUZ Y EN EL RADAR</div></div>
+<div id="puntos-feed"></div>
+<div id="countdown">10</div>
+<div id="no-pausa"><div class="np-txt">NO HAY TIEMPO<br>PARA PAUSAS</div><div class="np-sub">−1 VIDA · HAZ CLIC PARA VOLVER A LA ACCIÓN</div></div>
+<div id="heli-white"><div id="heli-text">EL HELICÓPTERO TE HA ENGANCHADO</div></div>
+<div id="fin-screen">
+  <div class="fin-t">FIN</div>
+  <div class="fin-l">PUNTAJE FINAL</div>
+  <div class="fin-score" id="fin-score">0</div>
+  <div class="fin-sub" id="fin-sub">---</div>
+  <div class="fin-rec" id="fin-rec"></div>
+  <div class="fin-sub" id="fin-wait" style="display:none;margin-top:10px">ESPERANDO A QUE TERMINEN LOS DEMÁS OPERATIVOS...</div>
+  <div class="fin-tabla" id="fin-tabla">
+    <div class="fin-l" id="fin-tabla-l">RESULTADOS</div>
+    <div class="fin-win" id="fin-win"></div>
+    <div class="fin-rows" id="fin-rows"></div>
+  </div>
+  <div class="fin-btns">
+    <button id="fin-retry" onclick="restartGame()">JUGAR DE NUEVO</button>
+    <button class="sec" onclick="location.href='index.html'">MENÚ PRINCIPAL</button>
+  </div>
+</div>
+
+<!-- briefing antes de cada oleada -->
+<div id="wave-brief">
+  <div class="wb-panel">
+    <div class="wb-head">
+      <div>
+        <div class="wb-wave" id="wb-wave">OLEADA 1 DE 3</div>
+        <div class="wb-title" id="wb-title">---</div>
+      </div>
+      <div class="wb-dur">DURACIÓN: 1 MINUTO<br><span style="font-size:14px;color:var(--text-dim);white-space:nowrap">AGUANTA HASTA QUE EL RELOJ LLEGUE A CERO</span></div>
+    </div>
+    <div class="wb-sec" id="wb-sec">QUÉ VIENE EN ESTA OLEADA</div>
+    <div class="wb-zombies" id="wb-zombies"></div>
+    <div class="wb-foot">
+      <div class="wb-tip" id="wb-tip"></div>
+      <button id="wb-go" onclick="comenzarOleada()">COMENZAR OLEADA</button>
+    </div>
+  </div>
+</div>
+
+<!-- pausa -->
+<!-- tienda del chatarrero entre oleadas -->
+<div id="shop-overlay">
+  <div class="shop-panel">
+    <div class="shop-head">
+      <div>
+        <div class="shop-title">EL CHATARRERO</div>
+      </div>
+      <div>
+        <div class="shop-cash" id="shop-cash">$0</div>
+        <div class="shop-timer" id="shop-timer"></div>
+      </div>
+    </div>
+    <div class="shop-quote" id="shop-quote">"Todo lo saqué de los escombros. No preguntes de quién era."</div>
+    <div class="shop-section">LO QUE COMPRES APARECERÁ EN EL MAPA — BÚSCALO EN EL RADAR</div>
+    <div class="shop-grid" id="shop-items"></div>
+    <div class="shop-actions">
+      <button class="sec" onclick="cerrarTienda()">CERRAR</button>
+      <button id="shop-go" onclick="iniciarSiguienteOleada()">SIGUIENTE OLEADA</button>
+    </div>
+  </div>
+</div>
+
+<!-- resultado final en linea gana quien tenga mas puntos -->
+<div id="ranking-overlay">
+  <div class="rk-label">ÚLTIMO HELICÓPTERO ASIGNADO A</div>
+  <div class="rk-winner" id="rk-winner">---</div>
+  <div class="rk-list" id="rk-list"></div>
+  <button onclick="location.href='index.html'">MENÚ PRINCIPAL</button>
+</div>
+
+<div id="pause-overlay">
+  <div class="pause-panel">
+    <div class="pause-title">PAUSA</div>
+    <div>
+    <div class="pause-stats">
+      <div class="pause-stat"><div class="pstat-val" id="p-wave">01</div><div class="pstat-label">OLEADA</div></div>
+      <div class="pause-stat"><div class="pstat-val" id="p-kills">0</div><div class="pstat-label">BAJAS</div></div>
+      <div class="pause-stat"><div class="pstat-val" id="p-score">0</div><div class="pstat-label">PUNTOS</div></div>
+    </div>
+    <div class="pause-nav">
+      <button onclick="resumeGame()">CONTINUAR</button>
+      <button onclick="restartGame()">REINICIAR</button>
+      <button onclick="abrirConfig()">CONFIGURACIÓN</button>
+      <button onclick="location.href='index.html'">MENÚ PRINCIPAL</button>
+    </div>
+    </div>
+    <div>
+      <div class="pause-side-title">CONTROLES</div>
+      <div class="controles-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- game over -->
+<div id="gameover-overlay">
+  <h1>YOU DIED</h1>
+  <p class="go-stats">
+    OLEADA <span id="go-wave">01</span> &nbsp;|&nbsp;
+    BAJAS  <span id="go-kills">0</span> &nbsp;|&nbsp;
+    PUNTOS <span id="go-score">0</span>
+  </p>
+  <p class="go-record" id="go-record"></p>
+  <p class="go-wait" id="go-wait" style="display:none">ESPERANDO A QUE TERMINEN LOS DEMÁS OPERATIVOS...</p>
+  <button id="go-retry" onclick="restartGame()">INTENTAR DE NUEVO</button>
+  <button onclick="location.href='index.html'">MENÚ PRINCIPAL</button>
+</div>
+
+<!-- el juego, arranque js carga three y luego los demas archivos -->
+
+<!-- socket io tiempo real, requiere node server js corriendo -->
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="js/juego/arranque.js"></script>
+
+</body>
+</html>
