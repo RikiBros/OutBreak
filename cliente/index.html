@@ -142,6 +142,27 @@
       <span class="btn-label">CONFIGURACIÓN</span>
     </a>
 
+    <a class="menu-btn" href="puntuaciones.html">
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
+          <path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/>
+        </svg>
+      </div>
+      <span class="btn-label">PUNTUACIONES</span>
+    </a>
+
+    <button class="menu-btn" onclick="abrirCreditos()">
+      <div class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <span class="btn-label">CRÉDITOS</span>
+    </button>
+
     <button class="menu-btn" id="btn-cerrar-sesion" onclick="pedirCerrarSesion()">
       <div class="btn-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -180,6 +201,27 @@
       <button class="logout-btn si" onclick="confirmarCerrarSesion()">SÍ, CERRAR SESIÓN</button>
       <button class="logout-btn" onclick="cancelarCerrarSesion()">CANCELAR</button>
     </div>
+  </div>
+</div>
+
+<!-- modal de creditos, quien hizo el juego -->
+<div id="creditos-modal">
+  <div class="auth-box creditos-box">
+    <button class="auth-close" onclick="cerrarCreditos()">×</button>
+    <h2>CRÉDITOS</h2>
+    <p class="auth-sub">OUTBREAK · SURVIVAL HORROR MULTIPLAYER</p>
+    <div class="cred-info">
+      <span>MATERIA</span><b>Gráficas Computacionales en Web</b>
+      <span>PROFESOR</span><b>Edgar Alejandro Sosa Molina</b>
+      <span>ESCUELA</span><b>LMAD · FCFM · UANL</b>
+    </div>
+    <div class="cred-titulo">EQUIPO</div>
+    <div class="cred-equipo">
+      <div><span>Aguirre Miranda Mariely Alejandra</span><b>2022816</b></div>
+      <div><span>Polina Méndez Carlo Emilio</span><b>2049948</b></div>
+      <div><span>Reyes Hernández Ricardo</span><b>1987560</b></div>
+    </div>
+    <p class="cred-pie">Agosto – Diciembre 2026 · Hecho con Three.js, Node.js, Socket.IO y MySQL</p>
   </div>
 </div>
 

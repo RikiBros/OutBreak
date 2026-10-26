@@ -203,7 +203,11 @@ function cerrarModoJuego() {
   document.getElementById('play-modal').classList.remove('open');
 }
 
+// creditos, los nombres del equipo, no hace falta sesion para verlos
+function abrirCreditos() { document.getElementById('creditos-modal').classList.add('open'); }
+function cerrarCreditos() { document.getElementById('creditos-modal').classList.remove('open'); }
+
 // esc cierra el modal
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { cerrarAuth(); cerrarModoJuego(); cancelarCerrarSesion(); }
+  if (e.key === 'Escape') { cerrarAuth(); cerrarModoJuego(); cancelarCerrarSesion(); cerrarCreditos(); }
 });
