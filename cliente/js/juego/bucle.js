@@ -12,6 +12,8 @@ function iniciarJuego() {
   document.getElementById('pip-local').textContent =
     (usuario?.username||'TÚ').substring(0,3).toUpperCase();
   if (ES_ZONA) { crearZona(); document.getElementById('heli-text').textContent = 'TU TIEMPO SE ACABÓ'; }
+  else if (ES_HOSPITAL) document.getElementById('heli-text').textContent = 'EL RESCATE TE SUBE A LA AZOTEA';
+  prepararLinterna();
   updateHUD();
   iniciarOleada();
 }
@@ -86,7 +88,7 @@ function animate() {
   }
 
   const vel = 8 * DIF.velJugador * (game.lentoT > 0 ? 0.55 : 1) * (game.aiming ? 0.55 : 1) * (corriendo ? 1.65 : 1);
-  if (!game.inShop && !game.briefing && !game.muerto) {
+  if (!game.inShop && !game.briefing && !game.muerto && !game.mapaAbierto) {
     if(keys.w) controls.moveForward( vel*dt);
     if(keys.s) controls.moveForward(-vel*dt);
     if(keys.d) controls.moveRight(   vel*dt);
@@ -166,3 +168,9 @@ window.addEventListener('resize',()=>{
 });
 
 animate();
+
+// bateria llena al empezar, y en el hospital la linterna empieza prendida porque no se ve nada
+function prepararLinterna() {
+  reiniciarBateria();
+  if (ES_HOSPITAL) alternarLinterna(true);
+}

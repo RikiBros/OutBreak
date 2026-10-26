@@ -59,6 +59,7 @@ const solidos = [];
 const mallasSolidas = [];
 const fuegos = [];
 let LIMITE = 38;            // borde jugable del mapa
+let RADIO_MAPA = 0;         // si el mapa es redondo, su radio, como el helipuerto
 let SPAWNS = null;          // puntos donde salen los zombies, si no hay salen en un anillo
 let INICIO_JUGADOR = new THREE.Vector3(0, 1.7, 0);
 
@@ -92,10 +93,16 @@ function resolverColision(p, r) {
   }
   p.x = Math.max(-LIMITE, Math.min(LIMITE, p.x));
   p.z = Math.max(-LIMITE, Math.min(LIMITE, p.z));
+  // en el mapa redondo no se puede pasar de la orilla
+  if (RADIO_MAPA) {
+    const d = Math.hypot(p.x, p.z), max = RADIO_MAPA - r;
+    if (d > max) { p.x *= max / d; p.z *= max / d; }
+  }
 }
 
 function puntoBloqueado(x, z, r) {
   if (Math.abs(x) > LIMITE || Math.abs(z) > LIMITE) return true;
+  if (RADIO_MAPA && Math.hypot(x, z) + r > RADIO_MAPA) return true;
   for (let i = 0; i < solidos.length; i++) {
     const b = solidos[i];
     if (x > b.minX - r && x < b.maxX + r && z > b.minZ - r && z < b.maxZ + r) return true;
@@ -227,6 +234,7 @@ function crearFuego(x, y, z, escala = 1, luz = null) {
 
 function actualizarFuegos(dt) {
   uniformTiempo.value += dt;          // anima los shaders de fuego y cielo
+  if (ES_HOSPITAL) actualizarHospital(dt);
   fuegos.forEach(f => {
     const p = f.llama.geometry.attributes.position.array, h = f.humo.geometry.attributes.position.array;
     for (let i = 0; i < f.vida.length; i++) {

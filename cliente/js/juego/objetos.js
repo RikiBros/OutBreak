@@ -70,7 +70,7 @@ function modeloPickup(tipo) {
 function soltarPickup(tipo) {
   let x = 0, z = 0;
   for (let intento = 0; intento < 60; intento++) {
-    x = (Math.random() * 2 - 1) * 34; z = (Math.random() * 2 - 1) * 34;
+    x = (Math.random() * 2 - 1) * (LIMITE - 3); z = (Math.random() * 2 - 1) * (LIMITE - 3);
     const d = Math.hypot(x - camera.position.x, z - camera.position.z);
     if (d > 8 && d < 30 && !puntoBloqueado(x, z, 1)) break;
   }
@@ -98,6 +98,7 @@ function actualizarPickups(dt) {
 
 function recogerPickup(tipo) {
   const def = PICKUPS[tipo];
+  Sonido.sfx('recoger');
   if (tipo === 'cargador') {
     game.mejoras.cargador++;
     aplicarMejoras();
@@ -128,6 +129,7 @@ const luzExplosion = new THREE.PointLight(0x66ddff, 0, 18);
 scene.add(luzExplosion);
 
 function lanzarGranada() {
+  Sonido.sfx('lanzar');
   const dir = new THREE.Vector3(); camera.getWorldDirection(dir);
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8),
     new THREE.MeshStandardMaterial({ color:0x1a6a7a, emissive:0x0a3a44 }));
@@ -142,6 +144,7 @@ function tintarZombie(e, hex) {
 }
 
 function explotar(pos) {
+  Sonido.sfx('paralizar', 0.3 + 0.7 * Sonido.porDistancia(camera.position.distanceTo(pos), 40));
   // no hace daño paraliza 5 s a los zombies cercanos
   const ids = [];
   enemies.forEach(e => {

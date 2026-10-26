@@ -60,6 +60,17 @@ function drawMinimap(){
   const W=c.width,H=c.height,S=W/80;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,W,H);
+  // en el hospital el radar solo muestra lo que alumbras, sin linterna no se ve nada
+  if (ES_HOSPITAL) {
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    if (!game.linternaOn) { flechaJugador(ctx, W/2, H/2, 1.1); return; }
+    ctx.save(); ctx.beginPath(); ctx.arc(W/2, H/2, VISTA_HOSPITAL*S, 0, Math.PI*2); ctx.clip();
+  }
+  // en el helipuerto se dibuja la orilla de la plataforma
+  if (RADIO_MAPA) {
+    ctx.beginPath(); ctx.arc(W/2 - camera.position.x*S, H/2 - camera.position.z*S, RADIO_MAPA*S, 0, Math.PI*2);
+    ctx.fillStyle='rgba(90,90,90,0.25)'; ctx.fill(); ctx.strokeStyle='#55ff88'; ctx.lineWidth=1.5; ctx.stroke();
+  }
   const punto = (x, z, r, color, cuadro) => {
     const dx=(x-camera.position.x)*S+W/2, dz=(z-camera.position.z)*S+H/2;
     const px=Math.max(3,Math.min(W-3,dx)), pz=Math.max(3,Math.min(H-3,dz));   // los objetos lejanos se pegan al borde
@@ -87,7 +98,9 @@ function drawMinimap(){
       ctx.setLineDash([4, 3]); ctx.strokeStyle = '#ffffff'; ctx.stroke(); ctx.setLineDash([]);
     }
   }
-  ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fillStyle='#ffffff'; ctx.fill();
+  if (ES_HOSPITAL) ctx.restore();
+  // tu en el centro, con la flecha de hacia donde miras
+  flechaJugador(ctx, W/2, H/2, 1.1);
 }
 
 // pausa game over
@@ -98,11 +111,14 @@ function pauseGame(){
     return;
   }
   game.paused=true; controls.unlock();
+  Musica.atenuar(true);
+  pararLatido();
   document.getElementById('pause-overlay').classList.add('visible');
 }
 
 window.resumeGame=function(){
   game.paused=false;
+  Musica.atenuar(false);
   document.getElementById('pause-overlay').classList.remove('visible');
   controls.lock();
 };
@@ -114,9 +130,13 @@ window.restartGame=function(){
   pickups.forEach(p => scene.remove(p.raiz)); pickups.length = 0;
   granadas.forEach(g => scene.remove(g.mesh)); granadas.length = 0;
   Object.assign(game, estadoInicial());
+  pararHelicoptero(0.3);
+  pararLatido();
+  Musica.atenuar(false);
   aplicarDificultadInicial();
   game.started = true;
   linterna.intensity = 0;
+  prepararLinterna();
   camera.position.copy(INICIO_JUGADOR);
   modeloPistola.visible = true; modeloEscopeta.visible = false;
   ['intermission','shop-overlay','shop-help','reload-bar'].forEach(id => document.getElementById(id).classList.remove('visible'));
@@ -139,6 +159,11 @@ window.restartGame=function(){
 function triggerGameOver(victoria){
   if (game.over) return;
   game.over=true; game.paused=true; game.waveActive=false; game.muerto=false; controls.unlock();
+  // se apaga la musica y suena el final que toca
+  Musica.parar(ES_ZONA ? 4 : 2);
+  pararHelicoptero(4);
+  pararLatido();
+  Musica.remate(!victoria ? 'derrota' : (ES_ZONA ? 'fin_honor' : 'victoria'));
   document.getElementById('respawn-overlay').classList.remove('visible');
   document.querySelector('#gameover-overlay h1').textContent = victoria ? 'SOBREVIVISTE' : 'YOU DIED';
   document.querySelector('#gameover-overlay h1').style.color = victoria ? '#ffcc44' : '';

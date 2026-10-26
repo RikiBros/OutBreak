@@ -9,6 +9,8 @@ function iniciarDescanso() {
   document.getElementById('inter-title').textContent = `OLEADA ${game.wave} DE ${TOTAL_OLEADAS} SUPERADA`;
   document.getElementById('intermission').classList.add('visible');
   game.listo = false;
+  // en el descanso suena la musica de la tienda
+  Musica.tocar('tienda');
   if (tipoPartida === 'online') {
     document.getElementById('inter-sub-solo').style.display = 'none';
     document.getElementById('inter-listos').style.display = '';
@@ -118,8 +120,9 @@ window.comprar = function(id) {
     if (nivel >= t.precio.length) return;
     costo = precioDe(t, nivel);
   } else costo = precioDe(t);
-  if (game.cash < costo) return;
+  if (game.cash < costo) { Sonido.sfx('error'); return; }
   game.cash -= costo;
+  Sonido.sfx('compra');
   soltarPickup(id);
   showAlert(t.nombre + ' SOLTADO EN EL MAPA');
   updateHUD(); renderTienda();
@@ -143,6 +146,7 @@ function takeDamage(amount, directo) {
     if (game.shield <= 0) showAlert('ESCUDO ROTO');
   }
   game.health = Math.max(0, game.health - amount);
+  Sonido.sfx('dolor', 0.8);
   updateHUD();
   f.classList.add('hit'); setTimeout(() => f.classList.remove('hit'), 200);
   if (game.health <= 0) {
@@ -154,6 +158,8 @@ function takeDamage(amount, directo) {
 // reaparicion modo supervivencia 5 s de espera y 3 s de inmunidad
 function iniciarReaparicion() {
   game.muerto = true;
+  Sonido.sfx('caer');
+  Musica.atenuar(true);
   game.respawnT = 5;
   game.muertes++;
   game.reloading = false;
@@ -164,6 +170,8 @@ function iniciarReaparicion() {
 
 function reaparecer() {
   game.muerto = false;
+  Sonido.sfx('reaparecer');
+  Musica.atenuar(false);
   game.health = game.maxHealth;
   game.ammo = game.maxAmmo;
   game.inmuneT = 3;
@@ -203,18 +211,13 @@ window._recibirDisparo = function(de, dano) {
   showAlert('¡' + de + ' TE DISPARÓ! — RALENTIZADO');
 };
 
-// items 1 botiquin 2 escudo 3 granada 4 linterna
+// usar objetos, 1 escudo, 2 granada, 3 estamina, e botiquin y f linterna
 window.useItem = function(i) {
   if (!game.started || game.over || game.paused || game.inShop || game.muerto) return;
-  // 5 linterna se prende y apaga, no se gasta
-  if (i === 4) {
-    game.linternaOn = !game.linternaOn;
-    linterna.intensity = game.linternaOn ? LINTERNA_INT : 0;
-    updateHUD();
-    return;
-  }
+  // la linterna se prende y apaga, gasta bateria
+  if (i === 4) { alternarLinterna(); return; }
   const NOMBRES = ['ESCUDOS', 'GRANADAS', 'BEBIDAS DE ESTAMINA', 'BOTIQUINES'];
-  if (game.items[i] <= 0) { showAlert('SIN ' + NOMBRES[i] + ' — CÓMPRALOS EN LA TIENDA (B)'); return; }
+  if (game.items[i] <= 0) { Sonido.sfx('error'); showAlert('SIN ' + NOMBRES[i] + ' — CÓMPRALOS EN LA TIENDA (B)'); return; }
   if (i === 0 && game.shield >= ESCUDO_MAX) { showAlert('ESCUDO AL MÁXIMO'); return; }
   if (i === 2 && game.stamina >= DIF.staminaMax) { showAlert('TU ESTAMINA YA ESTÁ LLENA'); return; }
   if (i === 3 && game.health >= game.maxHealth)  { showAlert('TU VIDA YA ESTÁ LLENA'); return; }
@@ -222,6 +225,7 @@ window.useItem = function(i) {
   const slot = document.querySelector('#item' + i + '-wrap .item-slot');
   slot.classList.add('used'); setTimeout(() => slot.classList.remove('used'), 250);
 
+  Sonido.sfx(['escudo', null, 'estamina', 'botiquin'][i]);
   if (i === 0) { game.shield = Math.min(ESCUDO_MAX, game.shield + 50); showAlert('+50 ESCUDO'); }
   if (i === 1) { lanzarGranada(); }
   if (i === 2) { game.stamina = DIF.staminaMax; game.agotado = false; showAlert('ESTAMINA AL 100%'); }
@@ -235,6 +239,7 @@ function reloadAmmo() {
   if (game.arma === 'escopeta') { showAlert('LA ESCOPETA NO SE RECARGA: CADA DISPARO GASTA UN CARTUCHO'); return; }
   if (game.ammo >= game.maxAmmo) { showAlert('EL CARGADOR ESTÁ LLENO'); return; }
   game.reloading  = true;
+  Sonido.sfx('recarga');
   game.reloadTime = RECARGA_SEG;
   document.getElementById('reload-bar').classList.add('visible');
   showAlert('RECARGANDO (' + RECARGA_SEG + 's)');

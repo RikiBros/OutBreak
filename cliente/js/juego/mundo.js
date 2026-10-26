@@ -4,6 +4,7 @@
 // mundo zombies, objetos, granadas, recarga y oleadas
 // se llama cada cuadro desde animate
 function actualizarMundo(dt) {
+  actualizarLinterna(dt);
   // oleada en curso
   if (game.waveActive) {
     const ola = OLEADAS[game.wave - 1];
@@ -20,7 +21,7 @@ function actualizarMundo(dt) {
     const cd = document.getElementById('countdown');
     if (game.waveTime <= 10 && game.waveTime > 0) {
       const num = String(Math.ceil(game.waveTime));
-      if (cd.textContent !== num) { cd.textContent = num; cd.classList.remove('pulso'); void cd.offsetWidth; cd.classList.add('pulso'); }
+      if (cd.textContent !== num) { Sonido.sfx(num === '1' ? 'tic_final' : 'tic'); cd.textContent = num; cd.classList.remove('pulso'); void cd.offsetWidth; cd.classList.add('pulso'); }
       cd.classList.add('visible');
     } else cd.classList.remove('visible');
     // ultima oleada la pantalla se va poniendo blanca llega el helicoptero
@@ -29,7 +30,13 @@ function actualizarMundo(dt) {
       const t = Math.max(0, Math.min(1, (5 - game.waveTime) / 5));
       document.getElementById('heli-white').style.opacity = t;
       document.getElementById('heli-text').style.opacity = t > 0.15 ? 1 : 0;
-      game.abduccionY = ES_ZONA ? 0 : t * t * 18;     // por honor no hay helicoptero, solo oscuridad
+      // el helicoptero se empieza a oir a los 10 segundos, muy bajito, y cada vez mas fuerte
+      if (!ES_ZONA && game.waveTime <= 10) {
+        if (!heliSonido) heliSonido = Sonido.bucle('helicoptero');
+        const k = Math.max(0, Math.min(1, (10 - game.waveTime) / 10));
+        if (heliSonido) heliSonido.volumen(0.04 + 0.96 * k * k);
+      }
+      game.abduccionY = (ES_ZONA || ES_HOSPITAL) ? 0 : t * t * 18;     // por honor no hay helicoptero, solo oscuridad
       if (t > 0 && game.muerto && !ES_ZONA) reaparecer();
     }
     if (game.waveTime <= 0) terminarOleada();
@@ -52,6 +59,7 @@ function actualizarMundo(dt) {
       game.ammo = game.maxAmmo;
       document.getElementById('reload-bar').classList.remove('visible');
       showAlert('ARMA LISTA');
+      Sonido.sfx('recarga_fin');
       updateHUD();
     }
   }
@@ -61,6 +69,7 @@ function actualizarMundo(dt) {
 
   // zombies perseguir, atacar y animar
   const autoridad = esAutoridad();
+  actualizarCaminos(dt);
   enemies.forEach(e => {
     // paralizado por granada no se mueve ni ataca
     if (e.paralizado > 0) {
@@ -68,10 +77,17 @@ function actualizarMundo(dt) {
       if (e.paralizado <= 0) { tintarZombie(e, 0x000000); if (e.mixer) e.mixer.timeScale = 1; }
       return;
     }
+    // en el helipuerto los zombies trepan por la orilla antes de caminar
+    if (e.subiendo > 0) {
+      e.subiendo -= dt;
+      e.mesh.position.y = -1.8 * Math.max(0, e.subiendo / 0.8);
+      animarHumanoide(e, dt);
+      return;
+    }
     const alcance = e.tipoId === 'tanque' ? 1.9 : 1.4;
     // cada jugador calcula el daño que le hacen a el
     const dYo = Math.hypot(camera.position.x - e.mesh.position.x, camera.position.z - e.mesh.position.z);
-    if (dYo <= alcance + 0.25 && !game.muerto) {
+    if (dYo <= alcance + 0.25 && !game.muerto && !hayPared(e.mesh.position.x, e.mesh.position.z, camera.position.x, camera.position.z)) {
       e.attackTimer -= dt;
       if (e.attackTimer <= 0) { takeDamage(e.tipo.dano); e.attackTimer = e.tipo.golpeCada * DIF.zombieAtaque; }
     }
@@ -94,12 +110,15 @@ function actualizarMundo(dt) {
     const dz = obj.z - e.mesh.position.z;
     const dist = Math.hypot(dx, dz);
     e.mesh.rotation.y = Math.atan2(dx, dz);
-    if (dist > alcance) {
+    if (dist > alcance || hayPared(e.mesh.position.x, e.mesh.position.z, obj.x, obj.z)) {
       // rodear obstaculos si el camino directo choca, probar otros angulos
       const r = 0.35 * e.tipo.escala;
       let ang = Math.atan2(dx, dz);
       e.desvioT = (e.desvioT || 0) - dt;
-      if (e.desvioT > 0) ang += e.desvio;
+      // en el hospital siguen el camino calculado por los pasillos y las puertas
+      const guia = ES_HOSPITAL ? direccionCampo(e.mesh.position) : null;
+      if (guia !== null) ang = guia;
+      else if (e.desvioT > 0) ang += e.desvio;
       else if (puntoBloqueado(e.mesh.position.x + Math.sin(ang) * 1.2, e.mesh.position.z + Math.cos(ang) * 1.2, r)) {
         for (const off of [0.6, -0.6, 1.2, -1.2, 1.8, -1.8, 2.5, -2.5]) {
           if (!puntoBloqueado(e.mesh.position.x + Math.sin(ang + off) * 1.2, e.mesh.position.z + Math.cos(ang + off) * 1.2, r)) {
@@ -146,5 +165,23 @@ function actualizarMundo(dt) {
   actualizarPickups(dt);
   actualizarGranadas(dt);
   enviarZombies(dt);
+  grunidos(dt);
   revisarZombiesRed(dt);
+}
+
+// el ruido del helicoptero al final de resiste, se apaga despacio cuando termina la partida
+let heliSonido = null;
+function pararHelicoptero(seg) {
+  if (heliSonido) { heliSonido.parar(seg); heliSonido = null; }
+}
+
+// de vez en cuando gruñe un zombie cercano, se oye mas fuerte mientras mas cerca esta
+let grunidoT = 2;
+function grunidos(dt) {
+  grunidoT -= dt;
+  if (grunidoT > 0 || !enemies.length) return;
+  grunidoT = 1.5 + Math.random() * 2.5;
+  const e = enemies[Math.floor(Math.random() * enemies.length)];
+  if (e.paralizado > 0) return;
+  Sonido.sfx('grunido', 0.8 * Sonido.porDistancia(camera.position.distanceTo(e.mesh.position), 28));
 }

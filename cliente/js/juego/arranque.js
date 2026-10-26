@@ -12,8 +12,8 @@ window.SkeletonUtilsMod = SkeletonUtilsMod;
 
 // el orden importa, cada archivo usa cosas de los anteriores
 const ARCHIVOS = [
-  'datos', 'red', 'inicio', 'escena', 'mapas', 'controles', 'remotos', 'armas', 'zombies',
-  'puntos', 'briefing', 'por-honor', 'objetos', 'mundo', 'tienda', 'hud', 'bucle',
+  'datos', 'red', 'inicio', 'escena', 'hospital-muebles', 'hospital', 'helipuerto', 'mapas', 'controles', 'remotos', 'armas', 'zombies',
+  'puntos', 'caminos', 'briefing', 'por-honor', 'objetos', 'mundo', 'tienda', 'linterna', 'hud', 'mapa-grande', 'bucle',
 ];
 
 function cargar(nombre) {

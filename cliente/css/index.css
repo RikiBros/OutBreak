@@ -206,6 +206,25 @@
   backdrop-filter: blur(4px);
 }
 #play-modal.open { display: flex; }
+
+/* modal para confirmar cerrar sesion */
+#logout-modal {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+#logout-modal.open { display: flex; }
+#logout-modal .auth-sub { font-size: 12px; line-height: 1.7; }
+#logout-modal .auth-sub span { color: #ff4444; }
+.logout-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.logout-btn {
+  padding: 12px 8px; background: rgba(20,5,5,0.9);
+  border: 1px solid rgba(180,0,0,0.35); color: rgba(220,180,180,0.8);
+  font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 3px; cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.logout-btn:hover { background: rgba(120,0,0,0.35); color: #fff; border-color: rgba(255,60,60,0.7); }
+.logout-btn.si { color: #ff4444; border-color: rgba(220,0,0,0.6); }
 .play-box { width: 460px; }
 .play-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .play-option {
@@ -277,17 +296,6 @@
   vertical-align: middle; margin-right: 8px;
   border: 1px solid rgba(180,0,0,0.6);
 }
-#user-badge button {
-  background: transparent;
-  border: none;
-  color: rgba(200,150,150,0.4);
-  font-size: 10px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  margin-left: 10px;
-  font-family: 'Oswald', sans-serif;
-}
-#user-badge button:hover { color: #ff4444; }
 
 /* boton login cuando no hay sesion */
 .btn-login-trigger {

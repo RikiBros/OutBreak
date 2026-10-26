@@ -33,6 +33,13 @@ window.spawnJugadorRemoto = function(socketId, username, color) {
   const boca = new THREE.Object3D(); boca.position.z = 0.3; arma.add(boca);
   arma.position.set(0, -0.86, 0.06); arma.rotation.x = Math.PI / 2;   // apunta hacia donde apunta el brazo
   h.partes.brazoD.add(arma);
+  // en el hospital los compañeros llevan linterna, si no no se verian
+  if (ES_HOSPITAL) {
+    const luz = new THREE.SpotLight(0xfff1cc, 3, 22, Math.PI / 7, 0.4, 1);
+    luz.position.set(0.2, 1.5, 0.3);
+    luz.target.position.set(0, 1.0, 6);
+    g.add(luz); g.add(luz.target);
+  }
   // etiqueta con el nombre del jugador sobre su cabeza
   // se hace con un sprite de canvas 2d
   const labelCanvas  = document.createElement('canvas');
@@ -95,6 +102,7 @@ window._disparoRemoto = function(socketId, arma) {
   if (!jr || jr.muerto) return;
   jr.mesh.updateWorldMatrix(true, true);
   jr.boca.getWorldPosition(_bocaPos);
+  Sonido.sfx(arma === 'e' ? 'escopeta' : 'pistola', 0.8 * Sonido.porDistancia(_bocaPos.distanceTo(camera.position), 45));
   const yaw = jr.mesh.rotation.y, p = jr.pitch;
   const dir = new THREE.Vector3(Math.sin(yaw) * Math.cos(p), Math.sin(p), Math.cos(yaw) * Math.cos(p));
   const flash = new THREE.Mesh(new THREE.SphereGeometry(arma === 'e' ? 0.2 : 0.12, 8, 6), new THREE.MeshBasicMaterial({ color:0xffd27a }));

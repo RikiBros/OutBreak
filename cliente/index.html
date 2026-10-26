@@ -9,7 +9,10 @@
 <!-- google identity services iniciar sesion con google -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="stylesheet" href="css/index.css"/>
+<link rel="icon" type="image/png" href="media/icono.png"/>
 <script src="js/comun/cursor.js"></script>
+<script src="js/comun/sonido.js"></script>
+<script src="js/comun/musica.js"></script>
 </head>
 <body>
 
@@ -33,7 +36,6 @@
 <div id="user-badge">
   <img id="badge-foto" alt="" style="display:none" referrerpolicy="no-referrer"/>
   OPERATIVO: <span id="badge-username">---</span>
-  <button onclick="cerrarSesion()">SALIR</button>
 </div>
 
 <!-- boton login visible sin sesion -->
@@ -140,7 +142,7 @@
       <span class="btn-label">CONFIGURACIÓN</span>
     </a>
 
-    <button class="menu-btn" onclick="window.close()">
+    <button class="menu-btn" id="btn-cerrar-sesion" onclick="pedirCerrarSesion()">
       <div class="btn-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -148,7 +150,7 @@
           <line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
       </div>
-      <span class="btn-label">SALIR</span>
+      <span class="btn-label">CERRAR SESIÓN</span>
     </button>
   </nav>
 
@@ -165,6 +167,19 @@
     <div id="google-btn-wrap"></div>
 
     <p class="auth-msg" id="auth-msg"></p>
+  </div>
+</div>
+
+<!-- modal para confirmar que quieres cerrar sesion -->
+<div id="logout-modal">
+  <div class="auth-box">
+    <button class="auth-close" onclick="cancelarCerrarSesion()">×</button>
+    <h2>CERRAR SESIÓN</h2>
+    <p class="auth-sub">¿SEGURO QUE QUIERES CERRAR SESIÓN, <span id="logout-nombre">OPERATIVO</span>?</p>
+    <div class="logout-btns">
+      <button class="logout-btn si" onclick="confirmarCerrarSesion()">SÍ, CERRAR SESIÓN</button>
+      <button class="logout-btn" onclick="cancelarCerrarSesion()">CANCELAR</button>
+    </div>
   </div>
 </div>
 

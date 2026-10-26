@@ -25,6 +25,11 @@ const OBJETOS_ZONA_TIPOS = [['escudo', 3], ['granada', 3], ['estamina', 3], ['bo
 const objetosZona = [];
 let zonaVisual = null;
 let contadorObjetos = Math.floor(Math.random() * 9000 + 1) * 1000;
+// el latido se repite mientras estes afuera y se corta en cuanto regresas a la zona
+let latidoSonido = null;
+function pararLatido() {
+  if (latidoSonido) { latidoSonido.parar(0.15); latidoSonido = null; }
+}
 let objetosZonaT = 0, envioObjetosT = 0, avisoFueraT = 0;
 
 function enZona() {
@@ -48,6 +53,8 @@ function radioZonaEn(t) {   // t son los segundos que ya pasaron
 
 function calcularCentrosZona() {
   const rnd = rngTexto(String(roomParam || ('solo' + Math.random())) + mapName);
+  // en el helipuerto la zona siempre esta en el centro y nunca se mueve
+  if (ES_HELIPUERTO) { centrosZona = [{ x: 0, z: 0 }]; return; }
   centrosZona = [{ x: INICIO_JUGADOR.x, z: INICIO_JUGADOR.z }];          // empieza donde aparecen los jugadores
   for (let k = 1; k * ZONA_MUEVE_CADA < 180; k++) {
     const r = radioZonaEn(k * ZONA_MUEVE_CADA);
@@ -122,7 +129,7 @@ function actualizarFormaZona() {
     if (Math.abs(zv.sigR - rSig) > 0.2) { anilloDe(zv.sig, rSig); zv.sigR = rSig; }
     zv.sig.position.set(prox.x, 0.06, prox.z);
     zv.sig.material.opacity = 0.35 + Math.sin(uniformTiempo.value * 8) * 0.25;
-    if (game.zonaAviso !== k) { game.zonaAviso = k; mostrarBanner('LA ZONA SE MUEVE EN 5 SEGUNDOS', 'SIGUE LA MARCA BLANCA'); }
+    if (game.zonaAviso !== k) { game.zonaAviso = k; mostrarBanner('LA ZONA SE MUEVE EN 5 SEGUNDOS', 'SIGUE LA MARCA BLANCA'); Sonido.sfx('alerta'); }
   }
   return { prox, faltan };
 }
@@ -156,7 +163,7 @@ function mostrarBriefingZona() {
   const z = document.getElementById('wb-zombies');
   z.classList.remove('uno');
   z.innerHTML = [
-    ['1', 'QUÉDATE EN LA ZONA', 'El círculo verde empieza enorme y se encoge hasta que apenas caben 2. Cada 25 s se mueve: una marca blanca te dice a dónde. Adentro ganas +25 cada 5 s.'],
+    ['1', 'QUÉDATE EN LA ZONA', (ES_HELIPUERTO ? 'El círculo verde está en el centro de la plataforma, empieza enorme y se encoge hasta que apenas caben 2. Nunca se mueve.' : 'El círculo verde empieza enorme y se encoge hasta que apenas caben 2. Cada 25 s se mueve: una marca blanca te dice a dónde.') + ' Adentro ganas +25 cada 5 s.'],
     ['2', 'AFUERA NO CUENTA', 'Bajas, disparos a la cabeza y granadas solo dan puntos si los haces DENTRO de la zona.'],
     ['3', 'OBJETOS PARA TODOS', 'No hay tienda. Los objetos aparecen al azar en el mapa y son los mismos para todos: el primero que llega se los queda.'],
     ['4', 'TE QUEDAN 3 MINUTOS', hordas + ' Si caes, te levantas a los 5 s.'],
@@ -236,6 +243,10 @@ function actualizarZona(dt) {
   if (!zonaVisual || game.over) return;
   const t = uniformTiempo.value;
   const dentro = enZona() && !game.muerto;
+  // afuera de la zona se oye tu corazon
+  if (game.waveActive && !dentro && !game.muerto) {
+    if (!latidoSonido) { latidoSonido = Sonido.bucle('latido'); if (latidoSonido) latidoSonido.volumen(1); }
+  } else pararLatido();
 
   // colores verde si estas adentro, rojo si estas afuera
   const col = dentro ? 0x44ff88 : 0xff3344;

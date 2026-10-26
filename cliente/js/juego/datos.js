@@ -22,17 +22,30 @@ const MAP_CONFIGS = {
     glbPath:null,
   },
 
+  // hospital totalmente a oscuras, sin linterna todo se ve negro
   'HOSPITAL INFECTADO': {
-    fogColor:0x020d03, fogDensity:0.035,
-    bgColor:0x020d03,
-    ambient:{ color:0x1a4a1a, intensity:1.8 },
-    sun:{ color:0x00AA44, intensity:1.5 },
-    fill:{ color:0x44FF88, intensity:0.6 },
-    accent1:{ color:0x00FF44, intensity:3, dist:22 },
-    accent2:{ color:0x88FF00, intensity:2, dist:16 },
-    floorColor:0x081a09, wallColor:0x050f05, ruinColor:0x0a1f0a,
-    ruinCount:12, enemySpeed:3.0, enemyBodyColor:0x1a3d1a, enemyEyeColor:0x00ff44,
-    startWaveEnemies:8, glbPath:null,
+    fogColor:0x000000, fogDensity:0.06,
+    bgColor:0x000000,
+    ambient:{ color:0x334455, intensity:0 },
+    sun:{ color:0x223344, intensity:0 },
+    fill:{ color:0x000000, intensity:0 },
+    accent1:{ color:0xff1a1a, intensity:0, dist:10 },
+    accent2:{ color:0xff1a1a, intensity:0, dist:10 },
+    floorColor:0x2a2a2a, wallColor:0x1a1a1a, ruinColor:0x222222,
+    glbPath:null,
+  },
+
+  // helipuerto de noche en la azotea, la ciudad se ve abajo
+  'HELIPUERTO': {
+    fogColor:0x14080a, fogDensity:0.008,
+    bgColor:0x0a0507,
+    ambient:{ color:0x5a5f78, intensity:0.55 },
+    sun:{ color:0x9fb0d8, intensity:0.45 },
+    fill:{ color:0x553040, intensity:0.25 },
+    accent1:{ color:0x55ff88, intensity:1.2, dist:14 },
+    accent2:{ color:0x55ff88, intensity:1.2, dist:14 },
+    floorColor:0x3a3a3a, wallColor:0x2a2a2a, ruinColor:0x2a2a2a,
+    glbPath:null,
   },
 };
 
@@ -40,6 +53,8 @@ const MAP_CONFIGS = {
 const urlParams   = new URLSearchParams(window.location.search);
 const mapName     = urlParams.get('map') || 'CIUDAD DEVASTADA';
 const CFG         = MAP_CONFIGS[mapName] || MAP_CONFIGS['CIUDAD DEVASTADA'];
+const ES_HOSPITAL = mapName === 'HOSPITAL INFECTADO';
+const ES_HELIPUERTO = mapName === 'HELIPUERTO';
 const savedCfg    = JSON.parse(localStorage.getItem('outbreak_config') || '{}');
 let   sensMouse   = Math.pow(2.5, ((savedCfg.sensitivity ?? 50) - 50) / 50);   // 1 es lo normal
 let   invertirY   = !!savedCfg.invertY;
@@ -106,7 +121,7 @@ const OBJETOS = [
   { id:'granada',  tecla:'2', nombre:'GRANADA',  fx:'PARALIZA',   color:'#4de8ff', desc:'No mata: deja inmóviles 5 s a los zombies cercanos.' },
   { id:'estamina', tecla:'3', nombre:'ESTAMINA', fx:'LLENA 100%', color:'#c8e04a', desc:'La estamina NO se recupera sola: esta bebida la llena.' },
   { id:'botiquin', tecla:'E', nombre:'BOTIQUÍN', fx:'+35 VIDA',   color:'#ff4d5a', desc:'Cura 35 de vida. La vida no se recupera sola.' },
-  { id:'linterna', tecla:'F', nombre:'LINTERNA', fx:'PRENDER',    color:'#ffd95a', desc:'Se prende y apaga cuando quieras.', herramienta:true },
+  { id:'linterna', tecla:'F', nombre:'LINTERNA', fx:'PRENDER',    color:'#ffd95a', desc:'Prendida dura 30 s y se va apagando, apagada se recarga en 10 s.', herramienta:true },
 ];
 
 // todos los controles del juego
@@ -123,6 +138,7 @@ const CONTROLES = [
   ['3', 'Tomar bebida de estamina'],
   ['E', 'Usar botiquín (+35 vida)'],
   ['F', 'Prender / apagar linterna'],
+  ['TAB', 'Ver el mapa completo (mantener)'],
   ['B', 'Tienda (entre oleadas)'],
   ['ESC', 'Pausa'],
   ['ENTER', 'Comenzar oleada'],
@@ -145,6 +161,7 @@ function renderHotbar() {
         <span class="item-key">${o.tecla}</span>
         <span class="ico">${ICONOS[o.id]}</span>
         <span class="item-count" id="item${i}-count">${o.herramienta ? 'OFF' : '0'}</span>
+        ${o.herramienta ? '<div class="bateria"><div id="bateria-fill"></div></div>' : ''}
       </div>
       <div class="item-name">${o.nombre}</div>
       <div class="item-fx">${o.fx}</div>
@@ -159,7 +176,7 @@ renderHotbar();
 const INTROS = {
   survival: {
     solo: [
-      'Día 3 del brote. El virus R-72 convirtió la ciudad en un cementerio.\nEres el ÚNICO SOBREVIVIENTE de {LUGAR}.\nPor fin alguien respondió la radio: un helicóptero de rescate viene por ti. Solo tienes que seguir vivo hasta que llegue.',
+      'Día 3 del brote. El virus R-72 convirtió la ciudad en un cementerio.\nEres el ÚNICO SOBREVIVIENTE en {LUGAR}.\nPor fin alguien respondió la radio: un helicóptero de rescate viene por ti. Solo tienes que seguir vivo hasta que llegue.',
       'OBJETIVO: resiste 3 oleadas de un minuto hasta que llegue el helicóptero.\nEntre oleadas, el Chatarrero te vende objetos con el dinero que ganas por cada infectado.\nBajas, tiros a la cabeza y granadas suman puntos.',
     ],
     online: [
@@ -169,12 +186,12 @@ const INTROS = {
   },
   zona: {
     solo: [
-      'Día 3 del brote. Te mordieron.\nEres el ÚNICO SOBREVIVIENTE de {LUGAR} y ya nadie vendrá por ti.\nEl virus te deja 3 minutos antes de convertirte. No hay rescate: solo queda decidir cómo caer.',
-      'OBJETIVO: pelea por honor dentro de la zona marcada. Solo cuenta lo que hagas ahí.\nLa zona empieza enorme, se encoge con el tiempo y cambia de lugar cada 25 segundos.\nNo hay tienda: los objetos aparecen al azar en el mapa.',
+      'Día 3 del brote. Te mordieron.\nEres el ÚNICO SOBREVIVIENTE en {LUGAR} y ya nadie vendrá por ti.\nEl virus te deja 3 minutos antes de convertirte. No hay rescate: solo queda decidir cómo caer.',
+      'OBJETIVO: pelea por honor dentro de la zona marcada. Solo cuenta lo que hagas ahí.\nLa zona empieza enorme, se encoge con el tiempo y {ZONA}.\nNo hay tienda: los objetos aparecen al azar en el mapa.',
     ],
     online: [
-      'Día 3 del brote. A todos los mordieron.\nUstedes son un GRUPO DE SOBREVIVIENTES de {LUGAR} y ya nadie vendrá por ustedes.\nEl virus les deja 3 minutos antes de convertirse. No hay rescate: solo honor.',
-      'OBJETIVO: demuestra quién cae con más honor. Solo cuenta lo que hagas dentro de la zona.\nLa zona se encoge y cambia de lugar cada 25 segundos; al final apenas caben dos.\nNo hay tienda: los objetos del mapa son para todos y el primero que llega se los queda.',
+      'Día 3 del brote. A todos los mordieron.\nUstedes son un GRUPO DE SOBREVIVIENTES en {LUGAR} y ya nadie vendrá por ustedes.\nEl virus les deja 3 minutos antes de convertirse. No hay rescate: solo honor.',
+      'OBJETIVO: demuestra quién cae con más honor. Solo cuenta lo que hagas dentro de la zona.\nLa zona se encoge y {ZONA}; al final apenas caben dos.\nNo hay tienda: los objetos del mapa son para todos y el primero que llega se los queda.',
     ],
   },
 };

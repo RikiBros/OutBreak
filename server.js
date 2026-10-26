@@ -13,6 +13,7 @@ const conectarBaseDatos = require('./servidor/basedatos');
 const crearSalas = require('./servidor/salas');
 const rutasCuenta = require('./servidor/rutas-cuenta');
 const rutasJuego = require('./servidor/rutas-juego');
+const rutasAudio = require('./servidor/rutas-audio');
 const socketsSala = require('./servidor/sockets-sala');
 const socketsJuego = require('./servidor/sockets-juego');
 
@@ -32,6 +33,7 @@ const salas = crearSalas(io, db);
 
 rutasCuenta(app, db, GOOGLE_CLIENT_ID);
 rutasJuego(app, db, io, salas);
+rutasAudio(app);
 
 // cada jugador que se conecta recibe los eventos de sala y de partida
 io.on('connection', (socket) => {

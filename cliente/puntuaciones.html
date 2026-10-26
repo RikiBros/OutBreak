@@ -7,7 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/menu.css"/>
 <link rel="stylesheet" href="css/puntuaciones.css"/>
+<link rel="icon" type="image/png" href="media/icono.png"/>
 <script src="js/comun/cursor.js"></script>
+<script src="js/comun/sonido.js"></script>
+<script src="js/comun/musica.js"></script>
 </head>
 <body>
 <div class="scores-wrap">
@@ -28,9 +31,9 @@
   <!-- filtros de mapa -->
   <div class="filter-bar" id="filter-bar">
     <button class="filter-btn active" onclick="filtrarMapa('')"             id="f-all">TODOS</button>
+    <button class="filter-btn"        onclick="filtrarMapa('HELIPUERTO')"          id="f-heli">HELIPUERTO</button>
     <button class="filter-btn"        onclick="filtrarMapa('CIUDAD DEVASTADA')"    id="f-ciudad">CIUDAD</button>
     <button class="filter-btn"        onclick="filtrarMapa('HOSPITAL INFECTADO')"  id="f-hospital">HOSPITAL</button>
-    <button class="filter-btn"        onclick="filtrarMapa('AEROPUERTO CAÍDO')"    id="f-aero">AEROPUERTO</button>
   </div>
 
   <!-- personal info solo en tab personal -->

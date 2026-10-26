@@ -22,6 +22,7 @@ function noHayPausa() {
   const ahora = performance.now();
   if (ahora - _ultimoNoPausa < 200) return;   // un solo esc no cuenta doble
   _ultimoNoPausa = ahora;
+  Sonido.sfx('buzz');
   const el = document.getElementById('no-pausa');
   el.classList.add('visible');
   el.classList.remove('golpe'); void el.offsetWidth; el.classList.add('golpe');
@@ -83,7 +84,7 @@ const raycaster = new THREE.Raycaster();
 const enemies   = [];
 
 document.addEventListener('click', (e) => {
-  if (!game.started || game.paused || game.over || game.inShop || game.briefing || game.muerto) return;
+  if (!game.started || game.paused || game.over || game.inShop || game.briefing || game.muerto || game.mapaAbierto) return;
   // si se perdio el mouse, por ejemplo al cerrar la tienda, un clic lo recupera
   if (!controls.isLocked) { if (e.target.id === 'gameCanvas') controls.lock(); return; }
   // solo se puede disparar mientras se apunta clic derecho
@@ -126,6 +127,7 @@ window.cerrarConfig = function() {
   cfg.sensitivity = +document.getElementById('cfg-sens').value;
   cfg.musicVolume = +document.getElementById('cfg-musica').value;
   cfg.sfxVolume   = +document.getElementById('cfg-efectos').value;
+  Sonido.volumenes(cfg.musicVolume, cfg.sfxVolume);
   cfg.invertY     = document.getElementById('cfg-inv').checked;
   cfg.shadows     = document.getElementById('cfg-sombras').checked;
   localStorage.setItem('outbreak_config', JSON.stringify(cfg));
@@ -148,9 +150,10 @@ document.addEventListener('wheel', () => {
 
 // saltar
 function saltar() {
-  if (!controls.isLocked || game.paused || game.over || game.inShop || game.briefing || game.muerto) return;
+  if (!controls.isLocked || game.paused || game.over || game.inShop || game.briefing || game.muerto || game.mapaAbierto) return;
   if (game.saltoY > 0 || game.abduccionY > 0) return;     // solo desde el piso
   game.saltoV = 6.2;
+  Sonido.sfx('salto');
 }
 
 // apuntar con clic derecho mantener

@@ -3,6 +3,11 @@
 
     // sincronizar slider valor visible mas relleno rojo
     function syncSlider(el, valId) {
+      // el volumen cambia al momento y el de efectos suena para probarlo
+      if (el.id === 'musicVolume' || el.id === 'sfxVolume') {
+        Sonido.volumenes(+document.getElementById('musicVolume').value, +document.getElementById('sfxVolume').value);
+        if (el.id === 'sfxVolume') Sonido.sfx('clic');
+      }
       document.getElementById(valId).textContent = el.value;
       const pct = ((el.value - el.min) / (el.max - el.min) * 100).toFixed(1) + '%';
       el.style.setProperty('--pct', pct);

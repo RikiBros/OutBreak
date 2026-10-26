@@ -84,6 +84,9 @@ window.comenzarOleada = function(automatico) {
   game.waveTime   = cfg.duracion;
   game.spawnTimer = 0.5;
   showWaveAlert(); updateHUD();
+  Sonido.sfx('oleada');
+  // en resiste la ciudad usa mapa y los mapas nuevos usan mapa2, por honor siempre usa honor
+  Musica.tocar(ES_ZONA ? 'honor' : (ES_HELIPUERTO ? 'helipuerto' : (ES_HOSPITAL ? 'mapa2' : 'mapa')));
   // si compraste algo, avisar que esta esperando en el mapa
   if (pickups.length > 0) {
     const b = document.getElementById('objetos-banner');

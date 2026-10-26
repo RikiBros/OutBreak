@@ -254,11 +254,13 @@ function spawnZombie(mezcla) {
   }
   const e = createEnemy(elegirTipo(mezcla), x, z);
   e.id = ++contadorZombies;
+  if (ES_HELIPUERTO) { e.subiendo = 0.8; e.mesh.position.y = -1.8; }
   enemies.push(e);
 }
 
 function damageEnemy(enemy, dmg, cabeza, atacante) {
   if (!enemy.alive) return;
+  if (!atacante) Sonido.sfx(cabeza ? 'cabeza' : 'impacto');
   destelloZombie(enemy);
   // en linea, si no eres el anfitrion, el decide si el zombie muere
   if (!esAutoridad()) {
@@ -302,6 +304,7 @@ function killEnemy(enemy, atacante, cabeza) {
 // quitar al zombie de la lista y reproducir su caida
 function matarVisual(enemy) {
   enemy.alive = false;
+  Sonido.sfx('muerte_zombie', Sonido.porDistancia(camera.position.distanceTo(enemy.mesh.position), 35));
   const i = enemies.indexOf(enemy);
   if (i > -1) enemies.splice(i, 1);
   enemy.tMuerte = 0;

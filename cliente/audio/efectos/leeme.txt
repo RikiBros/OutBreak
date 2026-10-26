@@ -1,0 +1,45 @@
+aqui van tus efectos de sonido, en formato mp3 y con estos nombres exactos, en minusculas
+todos son opcionales, si no pones uno se usa el sonido hecho con codigo
+
+botones
+clic.mp3            al dar clic en un boton
+hover.mp3           al pasar el mouse sobre un boton
+error.mp3           cuando no puedes hacer algo, como comprar sin dinero
+
+armas
+pistola.mp3         disparo de pistola, tambien el de tus compañeros
+escopeta.mp3        disparo de escopeta
+vacio.mp3           cuando ya no tienes balas
+recarga.mp3         cuando empiezas a recargar
+recarga_fin.mp3     cuando el arma ya esta lista
+
+zombies
+impacto.mp3         cuando le das a un zombie
+cabeza.mp3          cuando le das en la cabeza
+muerte_zombie.mp3   cuando muere un zombie
+grunido.mp3         gruñido de los zombies cercanos
+
+jugador
+dolor.mp3           cuando te hacen daño
+caer.mp3            cuando te derriban
+reaparecer.mp3      cuando vuelves a aparecer
+salto.mp3           al saltar
+
+objetos
+recoger.mp3         al recoger un objeto del mapa
+compra.mp3          al comprar en la tienda
+lanzar.mp3          al lanzar la granada
+paralizar.mp3       cuando explota la granada
+escudo.mp3          al usar el escudo
+botiquin.mp3        al usar el botiquin
+estamina.mp3        al tomar la bebida de estamina
+linterna.mp3        al prender o apagar la linterna
+
+avisos
+oleada.mp3          cuando empieza una oleada
+tic.mp3             cada segundo de la cuenta regresiva
+tic_final.mp3       el ultimo segundo de la cuenta regresiva
+helicoptero.mp3     el rotor del helicoptero en los ultimos 10 segundos de resiste, se repite solo, va subiendo de volumen
+buzz.mp3            cuando presionas esc en linea, no hay tiempo para pausas
+alerta.mp3          cuando la zona de por honor se va a mover
+latido.mp3          tu corazon mientras estas fuera de la zona de por honor, se repite solo y se corta al regresar

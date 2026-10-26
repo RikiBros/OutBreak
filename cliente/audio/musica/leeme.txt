@@ -1,0 +1,15 @@
+aqui van las canciones, en formato mp3 y con estos nombres exactos, en minusculas
+
+menu.mp3        suena en todas las pantallas del menu y en la historia antes de jugar
+mapa.mp3        suena durante las oleadas del modo resiste en la ciudad
+helipuerto.mp3  suena durante las oleadas del modo resiste en el helipuerto
+mapa2.mp3       suena durante las oleadas del modo resiste en el hospital
+tienda.mp3      suena en el descanso entre oleadas, cuando se abre la tienda
+honor.mp3       suena durante el modo por honor
+
+estas son opcionales, suenan una sola vez al terminar la partida
+victoria.mp3    cuando el helicoptero te rescata en resiste
+derrota.mp3     cuando pierdes
+fin_honor.mp3   cuando se acaba el tiempo en por honor
+
+las canciones se repiten solas, si falta una esa parte se queda sin musica

@@ -36,7 +36,7 @@ function switchTab(tab) {
 function filtrarMapa(mapa) {
   mapaFiltro = mapa;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  const ids = { '':'f-all','CIUDAD DEVASTADA':'f-ciudad','HOSPITAL INFECTADO':'f-hospital','AEROPUERTO CAÍDO':'f-aero' };
+  const ids = { '':'f-all','CIUDAD DEVASTADA':'f-ciudad','HOSPITAL INFECTADO':'f-hospital','HELIPUERTO':'f-heli' };
   const el = document.getElementById(ids[mapa]);
   if (el) el.classList.add('active');
   cargarDatos();

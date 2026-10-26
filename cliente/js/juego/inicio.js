@@ -64,8 +64,12 @@ function prepararPartida() {
 let introPaginas = [], introIdx = 0, introTimer = null, introEscribiendo = false;
 
 function mostrarIntro() {
+  Musica.tocar('menu');
   // dos paginas la historia y el objetivo cambian segun el modo y si juegas solo o en grupo
-  introPaginas = INTROS[game.gameMode][tipoPartida].map(t => t.replace('{LUGAR}', mapName));
+  // en el helipuerto la zona de por honor no se mueve, se queda en el centro
+  const zonaTxt = ES_HELIPUERTO ? 'se queda fija en el centro de la plataforma' : 'cambia de lugar cada 25 segundos';
+  const lugar = { 'CIUDAD DEVASTADA':'la CIUDAD DEVASTADA', 'HOSPITAL INFECTADO':'el HOSPITAL INFECTADO', 'HELIPUERTO':'el HELIPUERTO de la azotea' }[mapName] || mapName;
+  introPaginas = INTROS[game.gameMode][tipoPartida].map(t => t.replace('{LUGAR}', lugar).replace('{ZONA}', zonaTxt));
   introIdx = 0;
   document.getElementById('intro-place').textContent = mapName;
   document.getElementById('intro-time').textContent  = (ES_ZONA ? 'POR HONOR' : 'RESISTE') + '  ·  DÍA 3 DEL BROTE  ·  03:47 A.M.';

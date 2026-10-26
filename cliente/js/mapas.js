@@ -1,22 +1,31 @@
 // elegir mapa, modo y dificultad para jugar solo
 
 // mapas
+// ordenados de mas facil a mas dificil, las coordenadas son del centro de monterrey
+// el helipuerto esta en la azotea de una torre justo arriba de la ciudad devastada
+// el hospital esta mas al poniente, la altitud es sobre el nivel del mar
 const maps = [
   {
+    name: "HELIPUERTO",
+    desc: "Plataforma redonda en la azotea de una torre del centro, a más de 100 m sobre la calle.<br>No hay dónde cubrirse, pero los infectados solo llegan trepando por la orilla y los ves venir.",
+    threat: "ALTO",
+    image: "media/preview_helipuerto.jpg",
+    lat: "25.6694° N", lng: "100.3099° W", alt: "645m", sector: "AZOTEA · TORRE CENTRO"
+  },
+  {
     name: "CIUDAD DEVASTADA",
-    desc: "Zona urbana densa con alta concentración de infectados.<br>Recursos moderados.",
+    desc: "Las calles al pie de la torre: autos quemados, un autobús chocado y barricadas militares.<br>Hay edificios en ruinas para cubrirte y un muro de fuego cierra la zona.",
     threat: "CRÍTICO",
-    image: "media/ciudad_devastada.png",
-    lat: "25.6866° N", lng: "100.3161° W", alt: "538m"
+    image: "media/preview_ciudad.jpg",
+    lat: "25.6716° N", lng: "100.3092° W", alt: "538m", sector: "CENTRO · NIVEL DE CALLE"
   },
   {
     name: "HOSPITAL INFECTADO",
-    desc: "Pasillos oscuros llenos de mutantes. Alta densidad de recursos médicos.<br>Zona de alto riesgo biológico.",
+    desc: "El tercer piso del hospital, sin luz: pasillos, cuartos, quirófano, farmacia y morgue.<br>Solo ves lo que alumbra tu linterna, y la batería se acaba.",
     threat: "EXTREMO",
-    image: "media/hospital_infectado.jpg",
-    lat: "25.7324° N", lng: "100.2987° W", alt: "560m"
+    image: "media/preview_hospital.jpg",
+    lat: "25.6887° N", lng: "100.3497° W", alt: "552m", sector: "HOSPITAL · PISO 3"
   }
-
 ];
 
 let current = 0;
@@ -47,9 +56,11 @@ function updateDisplay(){
   document.getElementById('hud-lat').textContent = m.lat;
   document.getElementById('hud-lng').textContent = m.lng;
   document.getElementById('hud-alt').textContent = m.alt;
+  document.getElementById('hud-sector').textContent = m.sector;
 
   const displayContainer = document.getElementById('map-display');
-  displayContainer.innerHTML = `<img src="${m.image}" alt="${m.name}" onerror="this.style.display='none';">`;
+  displayContainer.innerHTML = `<img src="${m.image}" alt="${m.name}" onerror="this.style.display='none';">`
+    + `<div class="map-tag">${String(current + 1).padStart(2, '0')} / ${String(maps.length).padStart(2, '0')}  ·  ${m.sector}</div>`;
 }
 
 // segundo paso, elegir modo de juego

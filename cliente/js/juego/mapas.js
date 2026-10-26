@@ -1,5 +1,5 @@
 'use strict';
-// construye la ciudad, el hospital y el muro de fuego con el cielo rojo
+// construye la ciudad y el muro de fuego con el cielo rojo, el hospital y el helipuerto estan en sus propios archivos
 
 // mapa 1 ciudad devastada
 // cruce de dos avenidas con el helicoptero estrellado al centro
@@ -231,35 +231,10 @@ function construirCiudad() {
   scene.add(ceniza);
 }
 
-// escenario generico hospital, mientras se diseña
-function construirArena() {
-  const floorMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(80, 80, 20, 20),
-    new THREE.MeshStandardMaterial({ color:CFG.floorColor, roughness:0.85, metalness:0.0 })
-  );
-  floorMesh.rotation.x = -Math.PI/2;
-  floorMesh.receiveShadow = true;
-  scene.add(floorMesh);
-  scene.add(new THREE.GridHelper(80, 40, CFG.wallColor, CFG.wallColor));
-  const wallMat = new THREE.MeshStandardMaterial({ color:CFG.wallColor, roughness:0.9 });
-  [[0,4,-40,0],[0,4,40,0],[-40,4,0,Math.PI/2],[40,4,0,Math.PI/2]].forEach(([x,y,z,ry]) => {
-    const w = new THREE.Mesh(new THREE.BoxGeometry(80,8,1), wallMat);
-    w.position.set(x,y,z); w.rotation.y=ry;
-    w.castShadow=w.receiveShadow=true; scene.add(w);
-  });
-  const ruinMat = new THREE.MeshStandardMaterial({ color:CFG.ruinColor, roughness:0.9 });
-  [[-10,0,-15],[8,0,-12],[-5,0,10],[12,0,8],[-15,0,3],[3,0,-20],[-20,0,-5],[18,0,-18],[-8,0,18],[6,0,6],[-3,0,-8],[14,0,-4]]
-    .slice(0, CFG.ruinCount)
-    .forEach(([x,,z], i) => {
-      const h=1+((i*7)%3), w=0.8+((i*5)%3)*0.5;
-      const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,w), ruinMat);
-      m.position.set(x,h/2,z); m.castShadow=m.receiveShadow=true; scene.add(m);
-      agregarSolido(m);
-    });
-}
-
-if (mapName === 'CIUDAD DEVASTADA') construirCiudad();
-else construirArena();
+// el hospital se arma en hospital js
+if (ES_HOSPITAL) construirHospital();
+else if (ES_HELIPUERTO) construirHelipuerto();
+else construirCiudad();
 camera.position.copy(INICIO_JUGADOR);
 camera.lookAt(0, 1.7, -1);
 
@@ -274,7 +249,8 @@ const GLSL_RUIDO = `
 `;
 const uniformTiempo = { value: 0 };
 
-function crearLimiteYCielo() {
+// sin muro es para el helipuerto, ahi solo va el cielo
+function crearLimiteYCielo(sinMuro) {
   // muro de fuego animado en los 4 bordes
   const matFuego = new THREE.ShaderMaterial({
     uniforms: { uTiempo: uniformTiempo },
@@ -292,18 +268,20 @@ function crearLimiteYCielo() {
       }`,
     transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
   });
-  const L = LIMITE + 1, alto = 7;
-  [[0, L, 0], [0, -L, 0], [L, 0, Math.PI / 2], [-L, 0, Math.PI / 2]].forEach(([x, z, ry]) => {
-    const muro = new THREE.Mesh(new THREE.PlaneGeometry(L * 2, alto, 1, 1), matFuego);
-    muro.position.set(x, alto / 2, z); muro.rotation.y = ry;
-    scene.add(muro);
-    // resplandor rojo en el piso junto al muro
-    const brillo = new THREE.Mesh(new THREE.PlaneGeometry(L * 2, 3),
-      new THREE.MeshBasicMaterial({ color:0xff3a0a, transparent:true, opacity:0.22, depthWrite:false, blending:THREE.AdditiveBlending }));
-    brillo.rotation.x = -Math.PI / 2; brillo.rotation.z = ry;
-    brillo.position.set(x * 0.98, 0.03, z * 0.98);
-    scene.add(brillo);
-  });
+  if (!sinMuro) {
+    const L = LIMITE + 1, alto = 7;
+    [[0, L, 0], [0, -L, 0], [L, 0, Math.PI / 2], [-L, 0, Math.PI / 2]].forEach(([x, z, ry]) => {
+      const muro = new THREE.Mesh(new THREE.PlaneGeometry(L * 2, alto, 1, 1), matFuego);
+      muro.position.set(x, alto / 2, z); muro.rotation.y = ry;
+      scene.add(muro);
+      // resplandor rojo en el piso junto al muro
+      const brillo = new THREE.Mesh(new THREE.PlaneGeometry(L * 2, 3),
+        new THREE.MeshBasicMaterial({ color:0xff3a0a, transparent:true, opacity:0.22, depthWrite:false, blending:THREE.AdditiveBlending }));
+      brillo.rotation.x = -Math.PI / 2; brillo.rotation.z = ry;
+      brillo.position.set(x * 0.98, 0.03, z * 0.98);
+      scene.add(brillo);
+    });
+  }
 
   // cielo domo con neblina roja que se mueve
   const matCielo = new THREE.ShaderMaterial({
@@ -330,4 +308,5 @@ function crearLimiteYCielo() {
   scene.background = null;
   scene.fog.color.setHex(0x2a0b07);                // la niebla del suelo combina con el horizonte rojo
 }
-crearLimiteYCielo();
+// el hospital tiene techo, no lleva muro de fuego ni cielo
+if (!ES_HOSPITAL) crearLimiteYCielo(ES_HELIPUERTO);

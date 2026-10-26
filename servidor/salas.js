@@ -3,7 +3,7 @@
 module.exports = function crearSalas(io, db) {
   const salasActivas = {};
 
-  const MAPAS_VALIDOS = ['CIUDAD DEVASTADA', 'HOSPITAL INFECTADO'];
+  const MAPAS_VALIDOS = ['CIUDAD DEVASTADA', 'HOSPITAL INFECTADO', 'HELIPUERTO'];
   const MODOS_VALIDOS = ['survival', 'zona'];
 
   // tiempo que espera una sala ya iniciada a que todos entren al juego, al cambiar de pagina se reconectan

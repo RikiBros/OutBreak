@@ -64,6 +64,7 @@ function verificarSesion() {
       document.getElementById('user-badge').style.display      = 'block';
       document.getElementById('btn-abrir-login').style.display = 'none';
       document.getElementById('badge-username').textContent    = nombre;
+      document.getElementById('btn-cerrar-sesion').style.display = '';
       var foto = document.getElementById('badge-foto');
       if (u.foto) { foto.src = u.foto; foto.style.display = 'inline-block'; }
       else        { foto.style.display = 'none'; }
@@ -72,6 +73,8 @@ function verificarSesion() {
     }
   }
 }
+// sin sesion no hay nada que cerrar, el boton se esconde
+document.getElementById('btn-cerrar-sesion').style.display = 'none';
 verificarSesion();
 
 // modal
@@ -170,6 +173,20 @@ function cerrarSesion() {
   }
   document.getElementById('user-badge').style.display      = 'none';
   document.getElementById('btn-abrir-login').style.display = 'block';
+  document.getElementById('btn-cerrar-sesion').style.display = 'none';
+}
+
+// antes de cerrar sesion se pregunta si estas seguro
+function pedirCerrarSesion() {
+  document.getElementById('logout-nombre').textContent = document.getElementById('badge-username').textContent;
+  document.getElementById('logout-modal').classList.add('open');
+}
+function cancelarCerrarSesion() {
+  document.getElementById('logout-modal').classList.remove('open');
+}
+function confirmarCerrarSesion() {
+  cancelarCerrarSesion();
+  cerrarSesion();
 }
 
 // navegacion con validacion de sesion
@@ -188,5 +205,5 @@ function cerrarModoJuego() {
 
 // esc cierra el modal
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { cerrarAuth(); cerrarModoJuego(); }
+  if (e.key === 'Escape') { cerrarAuth(); cerrarModoJuego(); cancelarCerrarSesion(); }
 });

@@ -67,10 +67,11 @@ window.cambiarArma = function(arma) {
 // escopeta 9 perdigones en abanico, alcanza a varios zombies 1 s entre disparos
 function dispararEscopeta() {
   if (game.escopetaCD > 0) { showAlert('BOMBEANDO LA ESCOPETA...'); return; }
-  if (game.cartuchos <= 0) { showAlert('SIN CARTUCHOS — CÓMPRALOS EN LA TIENDA'); return; }
+  if (game.cartuchos <= 0) { Sonido.sfx('vacio'); showAlert('SIN CARTUCHOS — CÓMPRALOS EN LA TIENDA'); return; }
   game.cartuchos--;
   game.escopetaCD = 1.0;
   efectoDisparo(1);
+  Sonido.sfx('escopeta');
   if (window.emitirDisparoVisual) window.emitirDisparoVisual('e');
   const danoPor = new Map(), cabezaPor = new Set();
   raycaster.far = 22;
@@ -106,9 +107,10 @@ function dispararEscopeta() {
 function shoot() {
   if (game.arma === 'escopeta') { dispararEscopeta(); return; }
   if (game.reloading) { showAlert('RECARGANDO... ESPERA'); return; }
-  if (game.ammo <= 0) { showAlert('SIN BALAS — PRESIONA R PARA RECARGAR'); return; }
+  if (game.ammo <= 0) { Sonido.sfx('vacio'); showAlert('SIN BALAS — PRESIONA R PARA RECARGAR'); return; }
   game.ammo--; updateHUD();
   efectoDisparo(0.5);
+  Sonido.sfx('pistola');
   if (window.emitirDisparoVisual) window.emitirDisparoVisual('p');
   raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
   // las paredes y autos detienen las balas

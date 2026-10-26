@@ -97,6 +97,7 @@ window._zombiesEstado = function(lista) {
     if (!e) {
       e = createEnemy(TIPOS_IDS[ti] || 'caminante', x, z);
       e.id = id; e.mesh.rotation.y = rot;
+      if (ES_HELIPUERTO) { e.subiendo = 0.8; e.mesh.position.y = -1.8; }
       enemies.push(e);
     }
     e.netX = x; e.netZ = z; e.netRot = rot; e.netAtaca = !!(fl & 1); e.hp = hp;

@@ -131,3 +131,20 @@
 .shop-actions button:hover{background:rgba(138,77,255,0.55) !important;}
 .shop-actions button.sec{background:transparent !important;border-color:rgba(138,77,255,0.4) !important;}
 .si-tag{font-size:9px;letter-spacing:2px;color:#c49bff;border:1px solid rgba(196,155,255,0.4);padding:1px 6px;}
+
+/* mapa completo con tab */
+#mapa-grande{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.78);pointer-events:none;}
+#mapa-grande.visible{display:flex;}
+.mg-caja{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.mg-titulo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:6px;color:#ff4444;}
+#mapa-grande-canvas{border:2px solid var(--blood);box-shadow:0 0 40px rgba(200,0,0,0.35);}
+.mg-leyenda{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:12px;letter-spacing:2px;color:#ddd;}
+.mg-leyenda i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+.mg-ayuda{font-size:11px;letter-spacing:3px;color:var(--text-dim);}
+
+/* bateria de la linterna */
+.bateria{position:absolute;left:6px;right:6px;bottom:5px;height:5px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,217,90,0.4);}
+#bateria-fill{height:100%;width:100%;background:#ffd95a;transition:width 0.1s;}
+#bateria-fill.baja{background:#ff4433;}
+#bateria-fill.cargando{opacity:0.6;}
+
