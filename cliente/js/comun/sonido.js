@@ -87,7 +87,7 @@ const Sonido = (function () {
     if (ctx && ctx.state === 'suspended') ctx.resume();
   }
   ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, despertar, true));
-
+250
   // un tono con su envolvente, f2 hace que la nota se deslice
   function tono(o) {
     if (!ctx) return;

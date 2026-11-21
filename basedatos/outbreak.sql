@@ -1,5 +1,3 @@
--- base de datos de outbreak, se corre una sola vez en phpmyadmin o workbench
--- crea la base, las tablas y la vista del ranking
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
